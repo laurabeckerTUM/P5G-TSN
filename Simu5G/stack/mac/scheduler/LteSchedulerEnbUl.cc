@@ -164,22 +164,10 @@ bool LteSchedulerEnbUl::racschedule(double carrierFrequency, BandLimitVector* ba
 
             if (mac_->getCGStatus() == true)
                 blocks = mac_->getCGBlocks();
-            else{
-                if (getSimulation()->getSystemModule()->par("useQosModel").boolValue()){
-                    unsigned int key = idToMacCid(nodeId, 1); 
-                    blocks = mac_->getQosHandler()->getRBsByProfil(key);
-                    EV << "Search for profile and get Rbmin, Cid " << key << endl;
-                    if (blocks == 0){
-                        EV << "No profile found" << endl;
-                        blocks = mac_->getMinBlockAmount();
-                    }
-                    else{
-                        EV << "Profil found, cid = " << key << " Rbmin= " << blocks << endl;
-                    }
-                }
-            } 
-        //    else
-         //       blocks = mac_->getMinBlockAmount();
+            else{    
+                blocks = mac_->getMinBlockAmount();
+            }
+            
             bool allocation=false;
 
             unsigned int size = bandLim->size();

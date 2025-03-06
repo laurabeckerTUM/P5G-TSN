@@ -24,8 +24,8 @@ class QosCharacteristic {
 public:
     QosCharacteristic() {
     }
-    QosCharacteristic(ResourceType resType, unsigned short priorityLevel, double PDB, double PER, uint16_t DMDBV, uint16_t defAveragingWindow, int RBmin, bool PreAllocation, int Periodicity) :
-            resType(resType), priorityLevel(priorityLevel), PDB(PDB), PER(PER), DMDBV(DMDBV), defAveragingWindow(defAveragingWindow), RBmin(RBmin), PreAllocationEnabled(PreAllocation), periodicity(Periodicity){
+    QosCharacteristic(ResourceType resType, unsigned short priorityLevel, double PDB, double PER, uint16_t DMDBV, uint16_t defAveragingWindow) :
+            resType(resType), priorityLevel(priorityLevel), PDB(PDB), PER(PER), DMDBV(DMDBV), defAveragingWindow(defAveragingWindow){
         ASSERT(priorityLevel >= 0 && priorityLevel <= 127);
         ASSERT(DMDBV >= 0 && DMDBV <= 4095);
         ASSERT(defAveragingWindow >= 0 && defAveragingWindow <= 4095);
