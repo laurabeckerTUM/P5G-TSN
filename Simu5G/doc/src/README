@@ -1,0 +1,20 @@
+Simu5G Framework Documentation
+==============================
+
+Building the documentation website
+----------------------------------
+
+The Simu5G documentation is built with the Sphinx tool (sphinx-doc.org).
+A pipenv environment is set up automatically containing all the necessary python packages.
+
+To build the documentation, you have to install `pipenv` first:
+$ sudo apt install pipenv
+
+After that, you can use the following targets (dependencies will be installed
+automatically on the first use)
+
+- Use 'make server' to run a local web server to preview the documentation at
+  http://localhost:8000/
+- Use 'make html' or 'make pdf' to build the documentation.
+- Use 'make clean all' to build both the html and pdf version from scratch.
+

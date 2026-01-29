@@ -1,0 +1,11 @@
+# Compile as C++17 to suppress warnings ("warning: decomposition declarations are a C++17 extension [-Wc++17-extensions]")
+CXXFLAGS+= -Wno-c++17-extensions
+
+#
+# on Windows we have to link with the winsock2 library as it is no longer added
+# to the omnetpp system libraries by default (as of OMNeT++ 5.1)
+#
+ifeq ($(PLATFORM),win32.x86_64)
+  LDFLAGS += -lws2_32
+  LDFLAGS += -Wl,-Xlink=-force:multiple
+endif
