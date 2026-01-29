@@ -55,7 +55,7 @@ void TsnRelayUnit::handleUpperMessage(cMessage *msg){
     //send(msg,"lowerLayerOut");
 }
 int TsnRelayUnit::convertFiveqiToPcp(Packet *datagram){
-    globalData = check_and_cast<GlobalData*>(getSimulation()->getModuleByPath("globalData"));
+    globalData = check_and_cast<simu5g::GlobalData*>(getSimulation()->getModuleByPath("globalData"));
     std::string packetName = datagram->getName();
     size_t found = -1;
     auto mappingTable = globalData->getQosMappingTable();

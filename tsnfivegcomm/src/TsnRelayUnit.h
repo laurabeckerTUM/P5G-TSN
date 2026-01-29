@@ -35,9 +35,9 @@ class TsnRelayUnit : public inet::MacRelayUnitBase
     virtual void handleUpperMessage(inet::cMessage *msg) override;
     int convertFiveqiToPcp(inet::Packet *datagram);
   private:
-    QosChecker qosChecker;
-    Binder* binder = getBinder();
-    GlobalData *globalData;
+    simu5g::QosChecker qosChecker;
+    simu5g::Binder* binder = inet::getModuleFromPar<simu5g::Binder>(par("binderModule"), this);
+    simu5g::GlobalData *globalData;
 };
 
 #endif

@@ -52,7 +52,7 @@ using namespace inet;
 void Dstt::initialize()
 {
 
-    globalData = check_and_cast<GlobalData*>(getSimulation()->getModuleByPath("globalData"));
+    globalData = check_and_cast<simu5g::GlobalData*>(getSimulation()->getModuleByPath("globalData"));
 
 }
 
@@ -106,7 +106,7 @@ void Dstt::handlePacketFromUpper(cMessage *msg){
        catch (...){
            pcp=-1;
        }
-       auto header = makeShared<Ieee8021qTagEpdHeader>();
+       auto header = makeShared<inet::Ieee8021qTagEpdHeader>();
 
        if (pcp!=-1){
            header->setPcp(pcp);

@@ -35,12 +35,12 @@ class Dstt : public cSimpleModule
     virtual void handleMessage(cMessage *msg) override;
     void handlePacketFromUpper(cMessage *msg);
     int convertFiveqiToPcp(inet::Packet *datagram);
-    GlobalData *globalData;
+    simu5g::GlobalData *globalData;
   public:
-    Binder* binder_;
-    Direction dir;
+    simu5g::Binder* binder_;
+    simu5g::Direction dir;
     //TSN handling
-    QosChecker qosChecker;
+    simu5g::QosChecker qosChecker;
 };
 
 #endif
