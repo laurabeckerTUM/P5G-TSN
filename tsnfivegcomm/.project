@@ -3,7 +3,7 @@
 	<name>tsnfivegcomm</name>
 	<comment></comment>
 	<projects>
-		<project>inet</project>
+		<project>inet4.5</project>
 		<project>Simu5G</project>
 	</projects>
 	<buildSpec>
