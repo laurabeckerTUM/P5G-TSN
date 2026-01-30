@@ -51,6 +51,11 @@ public:
     double getPer(){
         return PER;
     }
+
+    ResourceType getResType(){
+        return resType;
+    }
+
 };
 
 ResourceType convertStringToResourceType(std::string type);

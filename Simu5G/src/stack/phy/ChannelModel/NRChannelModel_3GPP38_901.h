@@ -16,6 +16,13 @@
 
 namespace simu5g {
 
+enum InFType {
+  INF_SL,  // Small Hall, below clutter height
+  INF_DL,  // Large Hall, below clutter height
+  INF_SH,  // Small Hall, above clutter height
+  INF_DH   // Large Hall, above clutter height
+};
+
 // NRChannelModel_3GPP38_901
 //
 // This channel model implements path loss, LOS probability, and shadowing according to
@@ -84,6 +91,15 @@ class NRChannelModel_3GPP38_901 : public NRChannelModel
      * @param los line-of-sight flag
      */
     double computeIndoor(double threeDimDistance, double twoDimDistance, bool los);
+
+    /*
+     * InF path loss model (taken from TR 38.901)
+     *
+     * @param threeDimDistance distance between UE and gNodeB
+     * @param los line-of-sight flag
+     */
+
+    double computeInF(double threeDimDistance, double twoDimDistance, bool los, InFType InFtype);
 
     /*
      * Compute std deviation of shadowing according to scenario and visibility

@@ -51,6 +51,9 @@ class LteChannelModel : public cSimpleModule
     // Number of bands for this carrier
     unsigned int numBands_;
 
+    // MCS Table Index
+    int tableIndex;
+
   public:
 
     void initialize(int stage) override;

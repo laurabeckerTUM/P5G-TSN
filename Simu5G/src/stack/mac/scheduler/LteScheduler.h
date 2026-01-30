@@ -108,7 +108,7 @@ public:
     unsigned int currentSchedulingPeriodCounter_;
 
 
-
+    
     /**
      * Default constructor.
      */
@@ -175,9 +175,9 @@ public:
      * The schedule() simply calls the sequence of execSchedule() and storeSchedule().
      */
 
-    virtual void schedule();
+    virtual void schedule(bool static_scheduling = false);
 
-    virtual void prepareSchedule()
+    virtual void prepareSchedule(bool static_scheduling = false)
     {
     }
 
@@ -185,10 +185,11 @@ public:
     {
     }
 
+
     // *****************************************************************************************
 
     /// Performs request of grant to the eNbScheduler
-    virtual unsigned int requestGrant(MacCid cid, unsigned int bytes, bool& terminate, bool& active, bool& eligible, std::vector<BandLimit> *bandLim = nullptr);
+    virtual unsigned int requestGrant(MacCid cid, unsigned int bytes, bool& terminate, bool& active, bool& eligible, bool static_grant= false, int minMcsIndex = -1, int staticMcsIndex = -1, std::vector<BandLimit> *bandLim = nullptr);
 
     /// Performs request of background grant to the eNbScheduler
     virtual unsigned int requestGrantBackground(MacCid bgCid, unsigned int bytes, bool& terminate, bool& active, bool& eligible, std::vector<BandLimit> *bandLim = nullptr);
@@ -206,6 +207,8 @@ public:
     virtual void updateSchedulingInfo()
     {
     }
+
+    void applyCGs(int hpCycle, int slotOffset);
 
   protected:
 

@@ -221,7 +221,7 @@ double CellInfo::getPrimaryCarrierFrequency()
     return primaryCarrierFrequency;
 }
 
-void CellInfo::registerCarrier(double carrierFrequency, unsigned int carrierNumBands, unsigned int numerologyIndex, bool useTdd, unsigned int tddNumSymbolsDl, unsigned int tddNumSymbolsUl)
+void CellInfo::registerCarrier(double carrierFrequency, unsigned int carrierNumBands, unsigned int numerologyIndex, bool useTdd, unsigned int tddNumSymbolsDl, unsigned int tddNumSymbolsUl, unsigned int tddNumSlotsDl, unsigned int tddNumSlotsUl, unsigned int tddPatternPeriodicity)
 {
     auto it = carrierMap_.find(carrierFrequency);
     if (it != carrierMap_.end())
@@ -229,12 +229,32 @@ void CellInfo::registerCarrier(double carrierFrequency, unsigned int carrierNumB
     else {
         carriersVector_.push_back(carrierFrequency);
 
+        EV << "Register a new Carrier, useTdd= " << useTdd << " fdd= " << fdd << endl;
+        if (useTdd && !fdd) // new carrier is TDD and cell has no FDD carrier
+            tdd = true;
+        else if (useTdd && !tdd) // new carrier is FDD and cell has no TDD carrier
+            fdd = true;
+        else
+            throw omnetpp::cRuntimeError("CellInfo::registerCarrier - Simulation only supports pure TDD or FDD carriers, a combination of a FDD and a TDD carrier is not supported %d, %d, %d", useTdd, tdd, fdd);
+
+
         CarrierInfo cInfo;
         cInfo.carrierFrequency = carrierFrequency;
         cInfo.numBands = carrierNumBands;
         cInfo.numerologyIndex = numerologyIndex;
         cInfo.slotFormat = computeSlotFormat(useTdd, tddNumSymbolsDl, tddNumSymbolsUl);
+        cInfo.tddPattern = computeTddPattern(useTdd, tddNumSlotsDl, tddNumSlotsUl, tddPatternPeriodicity, cInfo.slotFormat, numerologyIndex);
         carrierMap_[carrierFrequency] = cInfo;
+
+        // store tdd pattern used by all TDD carriers
+        if (tdd){
+            if (!tdd_cell.tdd){ // first tdd carrier
+                tdd_cell = cInfo.tddPattern;
+            }
+            else if (compareTDDPatterns(cInfo.tddPattern, tdd_cell))
+                throw omnetpp::cRuntimeError("CellInfo::registerCarrier - all TDD carriers have to use the same UL-DL configuration");
+        }
+
 
         maxNumerologyIndex_ = numerologyIndex > maxNumerologyIndex_ ? numerologyIndex : maxNumerologyIndex_;
 
@@ -272,6 +292,15 @@ void CellInfo::registerCarrier(double carrierFrequency, unsigned int carrierNumB
         }
     }
 }
+
+bool CellInfo::compareTDDPatterns(TddPattern a, TddPattern b){
+    if (a.tdd == b.tdd && a.numDlSlots == b.numDlSlots && a.numUlSlots == b.numUlSlots && a.Periodicity == b.Periodicity &&
+        a.sharedSlot.numDlSymbols == b.sharedSlot.numDlSymbols && a.sharedSlot.numUlSymbols == b.sharedSlot.numUlSymbols)
+        return true;
+    else
+        return false;
+}
+
 
 const std::vector<double> *CellInfo::getCarriers()
 {
@@ -350,6 +379,34 @@ SlotFormat CellInfo::computeSlotFormat(bool useTdd, unsigned int tddNumSymbolsDl
     }
     return sf;
 }
+TddPattern CellInfo::computeTddPattern(bool useTdd, unsigned int tddNumSlotsDl, unsigned int tddNumSlotsUl, unsigned int tddPatternPeriodicity, SlotFormat sf, NumerologyIndex numerologyIndex)
+{
+    TddPattern tf;
+    tf.numerologyIndex = numerologyIndex;
+    if (!useTdd)
+    {
+        tf.tdd = false;
+
+        // these values are not used when tdd is false
+        tf.numDlSlots = 0;
+        tf.numUlSlots = 0;
+        tf.Periodicity = 0;
+        tf.sharedSlot = {false, 0, 0, 0}; // tdd, numDlSymbols, numUlSymbols, numFlexSymbols
+    }
+    else
+    {
+        tf.tdd = true;
+        tf.Periodicity = tddPatternPeriodicity;
+        tf.numDlSlots = tddNumSlotsDl;
+        tf.numUlSlots = tddNumSlotsUl;
+        tf.sharedSlot = sf;
+
+        if (tddNumSlotsDl+tddNumSlotsUl > tddPatternPeriodicity-1)
+            throw cRuntimeError("Binder::computeTddPattern - Number of UL and DL slot is not valid - DL[%d] UL[%d]", tddNumSlotsDl,tddNumSlotsUl);
+    }
+    return tf;
+}
+
 
 } //namespace
 

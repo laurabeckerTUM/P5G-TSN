@@ -74,7 +74,7 @@ class LteMacEnbD2D : public LteMacEnb
      * creates scheduling grants (one for each nodeId) according to the Schedule List.
      * It sends them to the lower layer
      */
-    void sendGrants(std::map<double, LteMacScheduleList> *scheduleList) override;
+    void sendGrants(std::map<double, LteMacScheduleList> *scheduleList, int slot_offset) override;
 
     void macHandleD2DModeSwitch(cPacket *pkt);
 
@@ -85,7 +85,7 @@ class LteMacEnbD2D : public LteMacEnb
 
     /// Lower Layer Handler
     void fromPhy(cPacket *pkt) override;
-
+    
   public:
 
 

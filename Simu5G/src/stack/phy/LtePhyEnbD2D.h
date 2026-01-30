@@ -29,6 +29,7 @@ class LtePhyEnbD2D : public LtePhyEnb
     void initialize(int stage) override;
     void requestFeedback(UserControlInfo *lteinfo, LteAirFrame *frame, inet::Packet *pkt) override;
     void handleAirFrame(cMessage *msg) override;
+    static simsignal_t numAirFrameNotReceivedSignal_;
 };
 
 } //namespace

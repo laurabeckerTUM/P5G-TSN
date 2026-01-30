@@ -25,6 +25,7 @@ simple LteChannelModel like ILteChannelModel
 
         string binderModule = default("binder");
         string cellInfoModule = default("^.^.cellInfo");  // optional
+        int tableIndex = default(1); // default MCS table index is 1 (NR)
 
         // component carrier for this channel model
         string componentCarrierModule = default("carrierAggregation.componentCarrier[0]");

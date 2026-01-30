@@ -17,9 +17,9 @@ namespace simu5g {
 
 using namespace omnetpp;
 
-void LteMaxCi::prepareSchedule()
+void LteMaxCi::prepareSchedule(bool static_scheduling)
 {
-    EV << NOW << " LteMaxCI::schedule " << eNbScheduler_->mac_->getMacNodeId() << endl;
+    EV << NOW << " LteMaxCI::schedule " << endl;
 
     activeConnectionTempSet_ = *activeConnectionSet_;
 

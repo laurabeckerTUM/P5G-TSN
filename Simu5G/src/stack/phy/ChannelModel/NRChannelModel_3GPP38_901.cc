@@ -30,6 +30,13 @@ void NRChannelModel_3GPP38_901::computeLosProbability(double d, MacNodeId nodeId
         return;
     }
 
+    // variable definition of InF Model
+    double hc; // ceiling height (InF model)
+    double d_clutter; // clutter height
+    double h_BS; // below clutter height
+    double r; // clutter density < 40%
+    double k;   
+
     switch (scenario_) {
         case URBAN_MICROCELL:
             if (d <= 18.0)
@@ -58,6 +65,49 @@ void NRChannelModel_3GPP38_901::computeLosProbability(double d, MacNodeId nodeId
                 p = exp(-1 * (d - 5.0) / 70.8);
             else
                 p = exp(-1 * (d - 49.0) / 211.7);
+            break;
+        case OPTIMAL:
+            p = 0;
+            break;
+        case INDOOR_FACTORY_SL:
+            d_clutter = 10;
+            h_BS = 1.5; // below clutter height
+            r = 0.2; // clutter density < 40%
+            hc = 2;
+            k = -d_clutter/log(1-r);
+            p = exp(-1 * (d/k));
+            break;
+        case INDOOR_FACTORY_DL:
+            d_clutter = 2;
+            h_BS = 1.5; // below clutter height
+            r = 0.6; // clutter density > 40%
+            hc = 2;
+            k = -d_clutter/log(1-r);
+            p = exp(-1 * (d/k));
+            break;
+        case INDOOR_FACTORY_SH:
+            d_clutter = 10;
+            h_BS = 8; // above clutter height
+            r = 0.2; // clutter density < 40%
+            hc = 6;
+            if (hc > hUe_) {
+                k = (-d_clutter / log(1.0 - r)) * ((h_BS - hUe_) / (hc - hUe_));
+            } else {
+                k = -d_clutter / log(1.0 - r); // fallback
+            }
+            p = exp(-1 * (d/k));
+            break;
+        case INDOOR_FACTORY_DH:
+            d_clutter = 2;
+            h_BS = 8; // above clutter height
+            r = 0.6; // clutter density > 40%
+            hc = 6;
+            if (hc > hUe_) {
+                k = (-d_clutter / log(1.0 - r)) * ((h_BS - hUe_) / (hc - hUe_));
+            } else {
+                k = -d_clutter / log(1.0 - r); // fallback
+            }
+            p = exp(-1 * (d/k));
             break;
         default:
             NRChannelModel::computeLosProbability(d, nodeId);
@@ -109,6 +159,20 @@ double NRChannelModel_3GPP38_901::computePathLoss(double threeDimDistance, doubl
             break;
         case RURAL_MACROCELL:
             pathLoss = computeRuralMacro(threeDimDistance, twoDimDistance, los);
+            break;
+        case INDOOR_FACTORY_SL:
+            pathLoss = computeInF(threeDimDistance, twoDimDistance, los, INF_SL);
+            break;
+        case INDOOR_FACTORY_DL:
+            pathLoss = computeInF(threeDimDistance, twoDimDistance, los, INF_DL);
+            break;
+        case INDOOR_FACTORY_SH:
+            pathLoss = computeInF(threeDimDistance, twoDimDistance, los, INF_SH);
+            break;
+        case INDOOR_FACTORY_DH:
+            pathLoss = computeInF(threeDimDistance, twoDimDistance, los, INF_DH);
+        case OPTIMAL:
+            pathLoss = 0;
             break;
         default:
             return NRChannelModel::computePathLoss(twoDimDistance, 0.0, los);
@@ -294,6 +358,56 @@ double NRChannelModel_3GPP38_901::computeIndoor(double threeDimDistance, double 
     return pLoss;
 }
 
+// Table 7.4.1-1: Pathloss models
+double NRChannelModel_3GPP38_901::computeInF(double threeDimDistance, double twoDimDistance, bool los, InFType InFtype)
+{
+    if (threeDimDistance < 1.0)
+        threeDimDistance = 1.0;
+
+    if (threeDimDistance > 600.0 && !tolerateMaxDistViolation_)
+        throw cRuntimeError("Error: Indoor factory path loss model is valid for d<600m only");
+
+    // Compute penetration loss 
+    double penetrationLoss = 0.0;
+    if (inside_building_)
+        penetrationLoss = computePenetrationLoss(threeDimDistance);
+
+    double pLoss_los = 31.84 + 21.5 * log10(threeDimDistance) + 19.00 * log10(carrierFrequency_);
+    pLoss_los += penetrationLoss;
+
+    double pLoss;
+    if (los) {
+        pLoss = pLoss_los;
+    } else {
+        double pLoss_nlos = 0.0;
+        switch(InFtype){
+            case INF_SL:
+                pLoss_nlos = 33 + 25.5 * log10(threeDimDistance) + 20.0 * log10(carrierFrequency_);
+                break;
+            case INF_DL:
+                pLoss_nlos = 18.6 + 35.7 * log10(threeDimDistance) + 20.0 * log10(carrierFrequency_);
+                break;
+            case INF_SH:
+                pLoss_nlos = 32.4 + 23.0 * log10(threeDimDistance) + 20.0 * log10(carrierFrequency_);
+                break;
+            case INF_DH:
+                pLoss_nlos = 33.63 + 21.9 * log10(threeDimDistance) + 20.0 * log10(carrierFrequency_);
+                break;
+            default:
+                pLoss_nlos = 33 + 25.5 * log10(threeDimDistance) + 20.0 * log10(carrierFrequency_);
+                break;
+        }
+        // NLOS formula for InF
+        
+        pLoss_nlos += penetrationLoss;
+
+        // Ensure NLOS >= LOS
+        pLoss = (pLoss_los > pLoss_nlos) ? pLoss_los : pLoss_nlos;
+    }
+    return pLoss;
+}
+
+
 double NRChannelModel_3GPP38_901::getStdDev(bool dist, MacNodeId nodeId)
 {
     switch (scenario_) {
@@ -321,6 +435,20 @@ double NRChannelModel_3GPP38_901::getStdDev(bool dist, MacNodeId nodeId)
             }
             else
                 return 8.;
+        case INDOOR_FACTORY_SL:
+            return (losMap_[nodeId]) ? 4.0 : 5.7; // Table 7.4.1-1, delta_SF
+
+        case INDOOR_FACTORY_DL:
+            return (losMap_[nodeId]) ? 4.0 : 7.2;
+
+        case INDOOR_FACTORY_SH:
+            return (losMap_[nodeId]) ? 4.0 : 5.9;
+
+        case INDOOR_FACTORY_DH:
+            return (losMap_[nodeId]) ? 4.0 : 4.0;
+        case OPTIMAL:
+            return 0.0;
+            break;
         default:
             throw cRuntimeError("Wrong path-loss scenario value %d", scenario_);
     }

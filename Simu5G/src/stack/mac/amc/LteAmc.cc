@@ -582,7 +582,7 @@ const UserTxParams& LteAmc::computeTxParams(MacNodeId id, const Direction dir, d
 *      Scheduler interface functions      *
 *******************************************/
 
-unsigned int LteAmc::computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency)
+unsigned int LteAmc::computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex, int staticMcsIndex)
 {
     if (blocks > 110)                          // Safety check to avoid segmentation fault
         throw cRuntimeError("LteAmc::computeBitsOnNRbs(): Too many blocks");
@@ -631,7 +631,7 @@ unsigned int LteAmc::computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks
     return bits;
 }
 
-unsigned int LteAmc::computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency)
+unsigned int LteAmc::computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex, int staticMcsIndex)
 {
     if (blocks > 110)                          // Safety check to avoid segmentation fault
         throw cRuntimeError("LteAmc::blocks2bits(): Too many blocks");
@@ -673,11 +673,11 @@ unsigned int LteAmc::computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsign
     return tbsVect[blocks - 1];
 }
 
-unsigned int LteAmc::computeBytesOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency)
+unsigned int LteAmc::computeBytesOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex, int staticMcsIndex)
 {
     EV << NOW << " LteAmc::blocks2bytes Node " << id << ", Band " << b << ", direction " << dirToA(dir) << ", blocks " << blocks << "\n";
 
-    unsigned int bits = computeBitsOnNRbs(id, b, blocks, dir, carrierFrequency);
+    unsigned int bits = computeBitsOnNRbs(id, b, blocks, dir, carrierFrequency, minMcsIndex, staticMcsIndex);
     unsigned int bytes = bits / 8;
 
     // DEBUG
@@ -688,11 +688,11 @@ unsigned int LteAmc::computeBytesOnNRbs(MacNodeId id, Band b, unsigned int block
     return bytes;
 }
 
-unsigned int LteAmc::computeBytesOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency)
+unsigned int LteAmc::computeBytesOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex, int staticMcsIndex)
 {
     EV << NOW << " LteAmc::blocks2bytes Node " << id << ", Band " << b << ", Codeword " << cw << ", direction " << dirToA(dir) << ", blocks " << blocks << "\n";
 
-    unsigned int bits = computeBitsOnNRbs(id, b, cw, blocks, dir, carrierFrequency);
+    unsigned int bits = computeBitsOnNRbs(id, b, cw, blocks, dir, carrierFrequency, minMcsIndex, staticMcsIndex);
     unsigned int bytes = bits / 8;
 
     // DEBUG
@@ -1366,7 +1366,7 @@ void LteAmc::testUe(MacNodeId nodeId, Direction dir)
                     if (testCqi == NOSIGNALCQI)
                         continue;
 
-                    feedback.at(i).get().print(NODEID_NONE, nodeId, dir, TxMode(i), "LteAmc::testUe");
+                   // feedback.at(i).get().print(NODEID_NONE, nodeId, dir, TxMode(i), "LteAmc::testUe");
                 }
             }
         }
@@ -1387,7 +1387,7 @@ void LteAmc::testUe(MacNodeId nodeId, Direction dir)
                         if (testCqi == NOSIGNALCQI)
                             continue;
 
-                        feedback.at(i).get().print(NODEID_NONE, nodeId, dir, TxMode(i), "LteAmc::testUe");
+                     //   feedback.at(i).get().print(NODEID_NONE, nodeId, dir, TxMode(i), "LteAmc::testUe");
                     }
                 }
             }
@@ -1397,6 +1397,17 @@ void LteAmc::testUe(MacNodeId nodeId, Direction dir)
 }
 
 void LteAmc::setPilotMode(PilotComputationModes mode) { pilot_->setMode(mode); }
+
+NRMCSelem LteAmc::getMcsElemPerCqi(Cqi cqi, const Direction dir, int minMcsIndex, int staticMcsIndex)
+{
+    // blocker function, overwritten by NrAmc
+    NRMCSelem ret;
+    ret.coderate_ = 0.0;
+    ret.mod_ = _QPSK;
+    ret.index_ = 0;
+    return ret;
+}
+
 
 } //namespace
 

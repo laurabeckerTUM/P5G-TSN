@@ -29,13 +29,17 @@ class DQos : public virtual LteScheduler
     DQos(Binder *binder) : LteScheduler(binder) {}
     DQos(Binder *binder, Direction dir) : LteScheduler(binder), dir(dir) {}
 
-    virtual void prepareSchedule();
+    virtual void prepareSchedule(bool static_scheduling = false);
 
     virtual void commitSchedule();
 
     virtual void notifyActiveConnection(MacCid cid);
 
     virtual void removeActiveConnection(MacCid cid);
+    void setActiveConnectionSet(std::set<MacCid>* set) { activeConnectionSet_ = set; }
+  
+  private:
+    int tryScheduleCid(const MacCid &macCid);
 
 };
 

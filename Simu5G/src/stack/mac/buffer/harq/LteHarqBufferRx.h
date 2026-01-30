@@ -65,6 +65,7 @@ class LteHarqBufferRx
     // reference to the eNB module
     opp_component_ptr<cModule> nodeB_;
 
+    std::vector<inet::Packet*> pendingFeedback_;
   private:
     // LteMacBase* of the UE for which this buffer has been created (whose ID is srcId_).
     // Only access via methods. This can be nullptr if node is removed from simulation
@@ -152,6 +153,8 @@ class LteHarqBufferRx
 
     virtual ~LteHarqBufferRx();
 
+    void flushFeedback();
+
   protected:
     /**
      * Checks for all processes if the PDU has been evaluated and sends
@@ -183,7 +186,9 @@ class LteHarqBufferRx
             macUe_ = macOwner_;
     }
 
-};
+    };
+
+
 
 } //namespace
 

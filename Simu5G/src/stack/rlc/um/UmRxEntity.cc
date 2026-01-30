@@ -150,6 +150,23 @@ void UmRxEntity::enque(cPacket *pktAux)
     pduBuffer_.addAt(index, pktPdu);
     received_.at(index) = true;
 
+    MacNodeId nodeId;
+    if (lteInfo->getDirection() == DL)
+        nodeId = lteInfo->getDestId();
+    else
+        nodeId = lteInfo->getSourceId();
+
+    auto tcsaiMappingTable = binder_->getGlobalDataModule()->getTscaiMappingTable();
+    auto iter = tcsaiMappingTable.find(nodeId);
+    if (iter != tcsaiMappingTable.end()) {
+        EV << "Correcting SDU cnt in UMRxEntity, ignoring missing packets for DC-GBR frames "<< endl;
+        // Ignore missing packets in case of DC-GBR
+        while (!received_.at(rxWindowDesc_.firstSnoForReordering_ - rxWindowDesc_.firstSno_) &&
+            rxWindowDesc_.firstSnoForReordering_ < rxWindowDesc_.highestReceivedSno_) {
+            rxWindowDesc_.firstSnoForReordering_++;
+        }
+    }
+
     // emit statistics
     MacNodeId ueId;
     if (lteInfo->getDirection() == DL || lteInfo->getDirection() == D2D || lteInfo->getDirection() == D2D_MULTI)                                                                                                                    // This module is at a UE
@@ -683,7 +700,8 @@ void UmRxEntity::reassemble(unsigned int index)
 void UmRxEntity::initialize()
 {
     binder_.reference(this, "binderModule", true);
-    timeout_ = par("timeout").doubleValue();
+    timeout_ = par("um_rx_timeout").doubleValue();
+    EV << "um_rx_timeout" << timeout_ << endl;
     rxWindowDesc_.clear();
     rxWindowDesc_.windowSize_ = par("rxWindowSize");
     received_.resize(rxWindowDesc_.windowSize_);

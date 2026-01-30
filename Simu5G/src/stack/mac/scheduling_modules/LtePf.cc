@@ -16,7 +16,7 @@ namespace simu5g {
 
 using namespace omnetpp;
 
-void LtePf::prepareSchedule()
+void LtePf::prepareSchedule(bool static_scheduling)
 {
     EV << NOW << "LtePf::execSchedule ############### eNodeB " << eNbScheduler_->mac_->getMacNodeId() << " ###############" << endl;
     EV << NOW << "LtePf::execSchedule Direction: " << ((direction_ == DL) ? " DL " : " UL ") << endl;

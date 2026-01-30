@@ -71,17 +71,24 @@ simple LteMacEnb extends LteMacBase
         //# eNb Scheduler Parameters
         //#
         // Scheduling discipline. See LteCommon.h for discipline meaning.
-        string schedulingDisciplineDl @enum(DRR,PF,MAXCI,MAXCI_MB,MAXCI_OPT_MB,MAXCI_COMP,ALLOCATOR_BESTFIT) = default("MAXCI");
-        string schedulingDisciplineUl @enum(DRR,PF,MAXCI,MAXCI_MB,MAXCI_OPT_MB,MAXCI_COMP,ALLOCATOR_BESTFIT) = default("MAXCI");
-
+        string schedulingDisciplineDl @enum(DRR,PF,MAXCI,MAXCI_MB,MAXCI_OPT_MB,MAXCI_COMP,DQOS,TSN_SCHEDULER, MIXED, ALLOCATOR_BESTFIT) = default("MAXCI");
+        string schedulingDisciplineUl @enum(DRR,PF,MAXCI,MAXCI_MB,MAXCI_OPT_MB,MAXCI_COMP,DQOS,TSN_SCHEDULER, MIXED, ALLOCATOR_BESTFIT) = default("MAXCI");
+        
+        // MIXED Scheduler dyn scheduling discipline, static Allocation is always TSNScheduler
+        string dynSchedulingDiscipline @enum(DRR,PF,MAXCI,MAXCI_MB,MAXCI_OPT_MB,MAXCI_COMP,DQOS,TSN_SCHEDULER, MIXED, ALLOCATOR_BESTFIT) = default("DQOS");
+        
         // Proportional Fair parameters
         double pfAlpha = default(0.95);
 
-        string pilotMode @enum(IN_CQI,MAX_CQI,AVG_CQI,MEDIAN_CQI,ROBUST_CQI) = default("ROBUST_CQI");
+        string pilotMode @enum(MIN_CQI,MAX_CQI,AVG_CQI,MEDIAN_CQI,ROBUST_CQI) = default("ROBUST_CQI");
 
         string cellInfoModule;
         string rlcUmModule = default("^.rlc.um");
         string pdcpRrcModule = default("^.pdcpRrc");
+
+        int minMcsIndex = default(-1);
+
+        int staticMcsIndex = default(-1);
 
         //#
         //# Statistics related to resource blocks occupancy
@@ -89,5 +96,7 @@ simple LteMacEnb extends LteMacBase
         @statistic[avgServedBlocksDl](title="Average number of allocated Resource Blocks in the Dl"; unit="blocks"; source="avgServedBlocksDl"; record=mean,vector);
         @signal[avgServedBlocksUl];
         @statistic[avgServedBlocksUl](title="Average number of allocated Resource Blocks in the Dl"; unit="blocks"; source="avgServedBlocksUl"; record=mean,vector);
+        @signal[selectedMcs];
+        @statistic[selectedMcs](title="Selected MCS"; unit=""; source="selectedMcs"; record=vector);
 }
 

@@ -26,5 +26,8 @@ simple LtePhyEnb extends LtePhyBase
     double lambdaMinTh = default(0.02);
     double lambdaMaxTh = default(0.2);
     double lambdaRatioTh = default(20);
+    @signal[numAirFrameNotReceivedSignal_];
+    @statistic[numAirFrameNotReceived](title="numAirFrameNotReceived"; unit=""; source="numAirFrameNotReceivedSignal_"; record=vector);
+
 }
 

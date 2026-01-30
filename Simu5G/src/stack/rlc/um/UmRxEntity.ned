@@ -27,7 +27,7 @@ simple UmRxEntity
         string binderModule = default("binder");
         string umModule = default("^.um");
         string macModule = default("^.^.mac");  // TODO set to "^.^.nrMac" when parent module name is "nrRlc"
-        double timeout @unit(s) = default(1s);            // Timeout for RX Buffer
+        double um_rx_timeout @unit(s) = default(1s);            // Timeout for RX Buffer
         int rxWindowSize = default(16);
 }
 

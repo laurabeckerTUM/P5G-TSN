@@ -44,6 +44,7 @@ UserControlInfo& UserControlInfo::operator=(const UserControlInfo& other)
     this->grantedBlocks = other.grantedBlocks;
     this->senderCoord = other.senderCoord;
     this->feedbackReq = other.feedbackReq;
+    this->mcsIndex = other.mcsIndex;
     UserControlInfo_Base::operator=(other);
     return *this;
 }

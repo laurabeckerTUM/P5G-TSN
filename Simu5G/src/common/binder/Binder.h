@@ -154,6 +154,7 @@ class Binder : public cSimpleModule
     std::vector<inet::Ipv4Address>ueEthernetConnectedDevices;
     int currentPacketQfi;
     GlobalData *globalData;
+    std::map<inet::Ipv4Address, inet::Ipv4Address> tsnDestAddress_to_cellularAddress;
     inet::Ipv4Address ipAddressOfTheUeToWhichTsnRadioLinkIsConnected;
 
     std::vector<int> qfiQueueFromGtp;
@@ -167,6 +168,7 @@ class Binder : public cSimpleModule
 
     void finish() override;
     NRQosCharacteristics *qosChar;
+    TddPattern global_tdd_pattern;
 
   public:
     Binder() :  lastUpdateUplinkTransmissionInfo_(0.0), lastUplinkTransmission_(0.0)
@@ -209,7 +211,7 @@ class Binder : public cSimpleModule
      * Registers a carrier to the global Binder module
      */
     void registerCarrier(double carrierFrequency, unsigned int carrierNumBands, unsigned int numerologyIndex,
-            bool useTdd = false, unsigned int tddNumSymbolsDl = 0, unsigned int tddNumSymbolsUl = 0);
+                bool useTdd=false, unsigned int tddNumSymbolsDl=0, unsigned int tddNumSymbolsUl=0,unsigned int tddNumSlotsDl=0, unsigned int tddNumSlotsUl=0, unsigned int tddPatternPeriodicity=0);
 
     /**
      * Registers a UE to a given carrier
@@ -250,6 +252,15 @@ class Binder : public cSimpleModule
      * Returns the slot format for the given carrier
      */
     SlotFormat getSlotFormat(double carrierFrequency);
+    /**
+     * Compute Tdd Pattern given number of DL and UL Slots and the structure of the shared slot
+     */
+    TddPattern computeTddPattern(bool useTdd, unsigned int tddNumSlotsDl, unsigned int tddNumSlotsUl, unsigned int tddPatternPeriodicity, SlotFormat sf, NumerologyIndex numerologyIndex);
+
+    /**
+     * Returns the TDDPattern --> only a common tdd pattern is accepted
+     */
+    TddPattern getTddPattern();
 
     /**
      * Registers a node to the global Binder module.
@@ -649,6 +660,9 @@ class Binder : public cSimpleModule
     void readTsnFiveGTrafficXml();
     inet::Ipv4Address getIpAddressOfTheUeToWhichTsnRadioLinkIsConnected(){
         return this->ipAddressOfTheUeToWhichTsnRadioLinkIsConnected;
+    }
+    inet::Ipv4Address getIpCellularAddressConnectedToTsnDevice(inet::Ipv4Address destAddress){
+        return tsnDestAddress_to_cellularAddress[destAddress];
     }
     GlobalData* getGlobalDataModule();
     int popValueFromQfiQueueFromGtp(){

@@ -18,6 +18,8 @@
 #include "stack/mac/packet/LteSchedulingGrant.h"
 #include "stack/mac/conflict_graph/DistanceBasedConflictGraph.h"
 #include "stack/packetFlowManager/PacketFlowManagerBase.h"
+#include "stack/mac/amc/NRMcs.h"
+#include "stack/mac/amc/NRAmc.h"
 
 namespace simu5g {
 
@@ -26,6 +28,10 @@ Define_Module(LteMacEnbD2D);
 using namespace omnetpp;
 using namespace inet;
 
+
+bool isInSameTddCycle(int oldTddOffset, int currentTddOffset, int tddPeriodicity) {
+    return (oldTddOffset / tddPeriodicity) == (currentTddOffset / tddPeriodicity);
+}
 
 
 void LteMacEnbD2D::initialize(int stage)
@@ -175,9 +181,19 @@ void LteMacEnbD2D::macPduUnmake(cPacket *pktAux)
     delete pkt;
 }
 
-void LteMacEnbD2D::sendGrants(std::map<double, LteMacScheduleList> *scheduleList)
+void LteMacEnbD2D::sendGrants(std::map<double, LteMacScheduleList> *scheduleList, int slot_offset)
 {
     EV << NOW << "LteMacEnbD2D::sendGrants " << endl;
+
+    // reset hp cntr in first tdd cycle and first to be scheduled slot
+    if (hp_cycle_cntr == 0 && slot_offset == 0) {
+        EV << "reset CGs check marks if new HP has started" << endl;
+        for (auto &uePair : historyCGsHP) {
+            for (auto &cg : uePair.second) {
+                cg.scheduledThisRound = false;
+            }
+        }
+    }
 
     for (auto& [carrierFreq, carrierScheduleList] : *scheduleList) {
         while (!carrierScheduleList.empty()) {
@@ -233,6 +249,10 @@ void LteMacEnbD2D::sendGrants(std::map<double, LteMacScheduleList> *scheduleList
 
             // set total granted blocks
             grant->setTotalGrantedBlocks(granted);
+            
+            // set slot offset
+            grant->setSlotOffset(slot_offset);
+            grant->setActive(true);
             grant->setChunkLength(b(1));
 
             pkt->addTagIfAbsent<UserControlInfo>()->setSourceId(getMacNodeId());
@@ -261,7 +281,14 @@ void LteMacEnbD2D::sendGrants(std::map<double, LteMacScheduleList> *scheduleList
                     for (const auto& antenna : antennas) {
                         bandAllocatedBlocks += enbSchedulerUl_->readPerUeAllocatedBlocks(nodeId, antenna, b);
                     }
-                    grantedBytes += amc_->computeBytesOnNRbs(nodeId, b, cw, bandAllocatedBlocks, dir, carrierFreq);
+                    auto iter = tcsaiMappingTable.find(nodeId);
+                    if (iter != tcsaiMappingTable.end()){
+                        grantedBytes += amc_->computeBytesOnNRbs(nodeId, b, cw, bandAllocatedBlocks, dir, carrierFreq, minMcsIndex, staticMcsIndex);
+                    }
+                    else{
+                        grantedBytes += amc_->computeBytesOnNRbs(nodeId, b, cw, bandAllocatedBlocks, dir, carrierFreq);
+                    }
+                    
                 }
 
                 grant->setGrantedCwBytes(cw, grantedBytes);
@@ -272,7 +299,40 @@ void LteMacEnbD2D::sendGrants(std::map<double, LteMacScheduleList> *scheduleList
             enbSchedulerUl_->readRbOccupation(nodeId, carrierFreq, map);
 
             grant->setGrantedBlocks(map);
+            bool foundMatch = false;
 
+            // check whether updated Grant is required
+            double tdd_duration = binder_->getTddPattern().Periodicity *  binder_->getSlotDurationFromNumerologyIndex(binder_->getTddPattern().numerologyIndex) * 1000;
+            auto iter = tcsaiMappingTable.find(nodeId);
+            if (iter != tcsaiMappingTable.end()){
+                grant->setPeriodic(true);
+                grant->setActive(true);
+                grant->setPeriod(tscaiHP);
+                grant->setHPCycle(hp_cycle_cntr);
+                grant->setHPCycleMax(tscaiHP/tdd_duration);
+
+                auto &prevCgs = historyCGsHP[nodeId];
+
+                for (auto &itOld : prevCgs) {
+                    if (itOld.HPCycle == hp_cycle_cntr && itOld.slotOffset == slot_offset) {
+                        if (compareCGs(itOld.grant, grant)) {
+                            // Case 1: identical grant → mark scheduled
+                            itOld.scheduledThisRound = true;
+                            foundMatch = true; // we will drop sending
+                        }
+                        // else: content changed → do nothing here
+                        break;
+                    }
+                }
+
+                if (!foundMatch) {
+                    // Case 2: new or updated grant → add to list (will be sent)
+                    auto grantCopy = inet::IntrusivePtr<LteSchedulingGrant>(
+                        check_and_cast<LteSchedulingGrant *>(grant->dup())
+                    );
+                    prevCgs.push_back(ConfiguredGrant{slot_offset, tscaiHP, hp_cycle_cntr, grantCopy, true, true, carrierFreq});
+                }
+            }
             /*
              * @author Alessandro Noferi
              * Notify the packet flow manager about the successful arrival of a TB from a UE.
@@ -284,8 +344,44 @@ void LteMacEnbD2D::sendGrants(std::map<double, LteMacScheduleList> *scheduleList
                 packetFlowManager_->grantSent(nodeId, grant->getGrantId());
 
             // send grant to PHY layer
-            pkt->insertAtFront(grant);
-            sendLowerPackets(pkt);
+            if (!foundMatch) {
+               pkt->insertAtFront(grant);
+               sendLowerPackets(pkt);
+            } else {
+               delete pkt; // drop packet for still-valid CG
+            }
+        }
+    }
+
+    double slot_duration = binder_->getSlotDurationFromNumerologyIndex(binder_->getTddPattern().numerologyIndex) * 1000; // assumes ms
+    double tdd_duration = binder_->getTddPattern().Periodicity;
+
+    if (slot_offset == binder_->getTddPattern().numUlSlots && (staticMcsIndex == -1 ||
+        (staticMcsIndex != -1 && tdd_cycle_cntr <= cg_preparation_time + tscaiHP/(slot_duration*tdd_duration)))) {
+        for (auto &uePair : historyCGsHP) {
+            auto &prevCgs = uePair.second;
+            for (auto it = prevCgs.begin(); it != prevCgs.end();) {
+                // Only consider CGs that belong to this TDD cycle
+                if (it->HPCycle == hp_cycle_cntr && !it->scheduledThisRound && it->active) {
+                    auto pkt = new Packet("LteGrant");
+                    auto inactiveGrant = makeShared<LteSchedulingGrant>(*it->grant);
+                    inactiveGrant->setActive(false);
+                    pkt->insertAtFront(inactiveGrant);
+                    pkt->addTagIfAbsent<UserControlInfo>()->setSourceId(getMacNodeId());
+                    pkt->addTagIfAbsent<UserControlInfo>()->setDestId(uePair.first);
+                    pkt->addTagIfAbsent<UserControlInfo>()->setFrameType(GRANTPKT);
+                    pkt->addTagIfAbsent<UserControlInfo>()->setCarrierFrequency(it->carrierFrequency);
+                    sendLowerPackets(pkt);
+
+                    it->active = false;
+                    it = prevCgs.erase(it); 
+
+                    emit(macCGRescheduledSignal_, 1);
+
+                } else {
+                    ++it;
+                }
+            }
         }
     }
 }

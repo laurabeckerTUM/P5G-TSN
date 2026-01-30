@@ -30,7 +30,7 @@ LteHarqBufferRx::LteHarqBufferRx(unsigned int num, LteMacBase *owner, Binder *bi
     : binder_(binder), macOwner_(owner), numHarqProcesses_(num), srcId_(srcId), processes_(num, nullptr), isMulticast_(false)
 {
     initMacUe();
-
+    
     for (unsigned int i = 0; i < numHarqProcesses_; i++) {
         processes_[i] = new LteHarqProcessRx(i, macOwner_, binder);
     }
@@ -90,7 +90,8 @@ void LteHarqBufferRx::sendFeedback()
                    << " result: " << r << endl;
 
                 macOwner_->takeObj(pkt);
-                macOwner_->sendLowerPackets(pkt);
+                pendingFeedback_.push_back(pkt);
+               // macOwner_->sendLowerPackets(pkt);
             }
         }
     }
@@ -220,6 +221,14 @@ bool LteHarqBufferRx::isHarqBufferActive() const {
         }
     }
     return false;
+}
+
+void LteHarqBufferRx::flushFeedback()
+{
+    for (auto pkt : pendingFeedback_) {
+        macOwner_->sendLowerPackets(pkt);
+    }
+    pendingFeedback_.clear();
 }
 
 } //namespace

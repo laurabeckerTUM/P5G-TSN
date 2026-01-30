@@ -21,16 +21,24 @@ class LteSchedulingGrant extends inet::FieldsChunk
 {
     @customize(true);  // see the generated C++ header for more info
     chunkLength = inet::B(1); // TODO: size 0
+    int SlotOffset;
+
     bool periodic;
-    unsigned int period;
+    int period;
+    int HPCycle;
     unsigned int expiration;
-       // blocks granted on all Remotes, all Bands
+    bool active;
+    int HPCycleMax;
+    unsigned int mcsIndex = -1;
+
+    // blocks granted on all Remotes, all Bands
     unsigned int totalGrantedBlocks;
     // number of codewords
     unsigned int codewords;
     // granted bytes per codeword
     abstract unsigned int grantedCwBytes[];
 
+    
     //#  in LteSchedulingGrant.h
     //# const UserTxParams* userTxParams;
     //# RbMap grantedBlocks;

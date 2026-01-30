@@ -93,6 +93,17 @@ class CellInfo : public cSimpleModule
     /// MCS scale DL
     double mcsScaleDl_ = 0;
 
+    bool tdd = false;
+    bool fdd = false;
+    TddPattern tdd_cell = {false, 0,0,0,{false, 0,0,0},0};
+
+    // variable storing current_slot
+    SlotType current_slot = FDD;
+
+    // current scheduling slot type
+    SlotType current_schedule_slot = FDD;
+
+
     /*
      * Carrier Aggregation support
      */
@@ -138,6 +149,18 @@ class CellInfo : public cSimpleModule
      * Compute slot format object given the number of DL and UL symbols
      */
     virtual SlotFormat computeSlotFormat(bool useTdd, unsigned int tddNumSymbolsDl, unsigned int tddNumSymbolsUl);
+
+    /**
+     * Compute tdd pattern given the number of DL, UL and shared slots
+     */
+    virtual TddPattern computeTddPattern(bool useTdd, unsigned int tddNumSlotsDl, unsigned int tddNumSlotsUl, unsigned int tddPatternPeriodicity, SlotFormat sf, NumerologyIndex numerologyIndex);
+
+    /**
+    * Compares two tdd patterns
+    */
+    virtual bool compareTDDPatterns(TddPattern a, TddPattern b);
+
+
 
   private:
     /**
@@ -326,7 +349,8 @@ class CellInfo : public cSimpleModule
      */
     // register a new carrier for this node with the given number of bands
     void registerCarrier(double carrierFrequency, unsigned int carrierNumBands, unsigned int numerologyIndex,
-            bool useTdd = false, unsigned int tddNumSymbolsDl = 0, unsigned int tddNumSymbolsUl = 0);
+            bool useTdd=false, unsigned int tddNumSymbolsDl=0, unsigned int tddNumSymbolsUl=0, unsigned int tddNumSlotsDl=0,
+            unsigned int tddNumSlotsUl=0, unsigned int tddPatternPeriodicity=0);
 
     const std::vector<double> *getCarriers();
 
@@ -355,6 +379,17 @@ class CellInfo : public cSimpleModule
     void attachUser(MacNodeId nodeId);
 
     ~CellInfo() override;
+
+    /******************************************************************************/
+    /*
+    * TDD Support
+    */
+    TddPattern getTddPattern(){ return tdd_cell; }
+    bool tddUsed(){ return tdd; }
+    void setCurrentSlotType(SlotType slottype) { this->current_slot = slottype; }
+    SlotType getCurrentSlotType() { return current_slot; }
+    void setSlotTypeForULSchedule(SlotType slottype){ this->current_schedule_slot = slottype; }
+    SlotType getSlotTypeForULSchedule() { return current_schedule_slot; }
 };
 
 } //namespace

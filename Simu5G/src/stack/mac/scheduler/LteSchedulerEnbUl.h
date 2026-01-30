@@ -21,12 +21,13 @@ namespace simu5g {
  *
  * LTE eNB uplink scheduler.
  */
-class LteSchedulerEnbUl : public LteSchedulerEnb
+class  LteSchedulerEnbUl: public LteSchedulerEnb
 {
   protected:
 
     typedef std::map<MacNodeId, unsigned char> HarqStatus;
     typedef std::map<MacNodeId, bool> RacStatus;
+    typedef std::map<MacNodeId, bool> PDUStatus;
 
     /// Minimum scheduling unit, represents the MAC SDU size
     unsigned int scheduleUnit_;
@@ -46,6 +47,7 @@ class LteSchedulerEnbUl : public LteSchedulerEnb
 
     //! RAC request flags: signals whether a UE shall be granted the RAC allocation
     std::map<double, RacStatus> racStatus_;
+    std::map<double, PDUStatus> pduSessions_;
 
   public:
 
@@ -83,6 +85,17 @@ class LteSchedulerEnbUl : public LteSchedulerEnb
         racStatus_.at(carrierFrequency)[nodeId] = true;
     }
 
+    virtual void signalPDUEstablished(MacNodeId nodeId, double carrierFrequency)
+    {
+        if (pduSessions_.find(carrierFrequency) == pduSessions_.end()) {
+            RacStatus newMap;
+            pduSessions_[carrierFrequency] = newMap;
+        }
+        pduSessions_.at(carrierFrequency)[nodeId] = true;
+        EV << "new pdu session established, nodeid" << nodeId << " cf " << carrierFrequency << endl;
+    }
+        
+
     /**
      * Schedules retransmission for the Harq Process of the given UE on a set of logical bands.
      * Each band has also assigned a band limit amount of bytes: no more than the specified
@@ -105,8 +118,9 @@ class LteSchedulerEnbUl : public LteSchedulerEnb
             Remote antenna = MACRO, bool limitBl = false) override;
 
     void removePendingRac(MacNodeId nodeId);
-};
 
+bool checkPDUStatus(double frequency, MacNodeId nodeId);
+};
 } //namespace
 
 #endif // _LTE_LTE_SCHEDULER_ENB_UL_H_

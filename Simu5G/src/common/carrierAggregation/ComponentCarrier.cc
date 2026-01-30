@@ -31,10 +31,14 @@ void ComponentCarrier::initialize()
     if (useTdd_) {
         tddNumSymbolsDl_ = par("tddNumSymbolsDl");
         tddNumSymbolsUl_ = par("tddNumSymbolsUl");
+        tddNumSlotsDl_   = par("tddNumSlotsDl");
+        tddNumSlotsUl_   = par("tddNumSlotsUl");
+        tddPatternPeriodicity_ = par("tddPatternPeriodicity");
+
     }
 
     // Register the carrier to the binder
-    binder_->registerCarrier(carrierFrequency_, numBands_, numerologyIndex_, useTdd_, tddNumSymbolsDl_, tddNumSymbolsUl_);
+    binder_->registerCarrier(carrierFrequency_, numBands_, numerologyIndex_, useTdd_, tddNumSymbolsDl_, tddNumSymbolsUl_, tddNumSlotsDl_, tddNumSlotsUl_, tddPatternPeriodicity_);
 }
 
 } //namespace

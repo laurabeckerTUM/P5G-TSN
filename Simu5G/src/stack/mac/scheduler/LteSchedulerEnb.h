@@ -46,6 +46,8 @@ class LteSchedulerEnb
     friend class LteMaxCiComp;
     friend class LteAllocatorBestFit;
     friend class DQos;
+    friend class TSNScheduler;
+    friend class MixedScheduler;
 
   protected:
 
@@ -264,7 +266,11 @@ class LteSchedulerEnb
 
     virtual unsigned int scheduleGrantBackground(MacCid bgCid, unsigned int bytes, bool& terminate, bool& active, bool& eligible, double carrierFrequency,
             BandLimitVector *bandLim = nullptr, Remote antenna = MACRO, bool limitBl = false);
-    /*
+    
+    virtual unsigned int scheduleStaticGrant(MacCid cid, unsigned int bytes, bool& terminate, bool& active, bool& eligible, double carrierFrequency,
+            int minMcsIndex = -1, int staticMcsIndex = -1, BandLimitVector *bandLim = nullptr, Remote antenna = MACRO, bool limitBl = false);
+    
+            /*
      * Getter for active connection set
      */
     ActiveSet *readActiveConnections();
@@ -336,7 +342,7 @@ class LteSchedulerEnb
      * @param cw codeword
      * @return available space in bytes
      */
-    unsigned int availableBytes(const MacNodeId id, const Remote antenna, Band b, Codeword cw, Direction dir, double carrierFrequency, int limit = -1);
+    unsigned int availableBytes(const MacNodeId id, const Remote antenna, Band b, Codeword cw, Direction dir, double carrierFrequency, int limit = -1, int minMcsIndex = -1, int staticMcsIndex = -1);
     /**
      * Returns the available space for a given (background) user, antenna, logical band, and codeword, in bytes.
      *
@@ -372,7 +378,7 @@ class LteSchedulerEnb
      * implementing the given discipline.
      * @param discipline scheduler discipline
      */
-    LteScheduler *getScheduler(SchedDiscipline discipline);
+    LteScheduler *getScheduler(SchedDiscipline disciplineA, SchedDiscipline disciplineB, Direction direction_);
 };
 
 } //namespace

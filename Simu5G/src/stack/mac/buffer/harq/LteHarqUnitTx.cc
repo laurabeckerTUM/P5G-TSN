@@ -20,6 +20,7 @@ using namespace omnetpp;
 simsignal_t LteHarqUnitTx::macPacketLossSignal_[2] = { cComponent::registerSignal("macPacketLossDl"), cComponent::registerSignal("macPacketLossUl") };
 simsignal_t LteHarqUnitTx::macCellPacketLossSignal_[2] = { cComponent::registerSignal("macCellPacketLossDl"), cComponent::registerSignal("macCellPacketLossUl") };
 simsignal_t LteHarqUnitTx::harqErrorRateSignal_[2] = { cComponent::registerSignal("harqErrorRateDl"), cComponent::registerSignal("harqErrorRateUl") };
+simsignal_t LteHarqUnitTx::harqErrorRateSignalPeriodic = { cComponent::registerSignal("harqErrorRateUlPeriodic") };
 simsignal_t LteHarqUnitTx::harqErrorRate_1Signal_[2] = { cComponent::registerSignal("harqErrorRate_1st_Dl"), cComponent::registerSignal("harqErrorRate_1st_Ul") };
 simsignal_t LteHarqUnitTx::harqErrorRate_2Signal_[2] = { cComponent::registerSignal("harqErrorRate_2nd_Dl"), cComponent::registerSignal("harqErrorRate_2nd_Ul") };
 simsignal_t LteHarqUnitTx::harqErrorRate_3Signal_[2] = { cComponent::registerSignal("harqErrorRate_3rd_Dl"), cComponent::registerSignal("harqErrorRate_3rd_Ul") };
@@ -91,6 +92,7 @@ Packet *LteHarqUnitTx::extractPdu()
     status_ = TXHARQ_PDU_WAITING; // waiting for feedback
 
     auto lteInfo = pdu_->getTagForUpdate<UserControlInfo>();
+    EV << "LteHarqUnitTx::extractPdu" << lteInfo->getMcsIndex() << endl;
     lteInfo->setTxNumber(transmissions_);
     lteInfo->setNdi(transmissions_ == 1);
     EV << "LteHarqUnitTx::extractPdu - ndi set to " << ((transmissions_ == 1) ? "true" : "false") << endl;
@@ -180,6 +182,9 @@ bool LteHarqUnitTx::pduFeedback(HarqAcknowledgment a)
     }
 
     ue->emit(harqErrorRateSignal_[dir_], sample);
+
+    if (sample == 1)
+        ue->emit(harqErrorRateSignalPeriodic, sample);
 
     if (ntx < 4)
         ue->recordHarqErrorRate(sample, (Direction)dir);

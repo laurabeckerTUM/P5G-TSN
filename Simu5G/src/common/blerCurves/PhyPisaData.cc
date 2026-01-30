@@ -2672,5 +2672,13 @@ double PhyPisaData::getChannel(unsigned int i)
     return channel_[i];
 }
 
+double PhyPisaData::getBlerForMcs(int itxmode, unsigned int mcsIndex, int snr, const NRMcsTable &mcsTable)
+{
+    // map mcs -> cqi (1..15)
+    int cqi = mcsTable.getCqiForMcsIndex(mcsIndex);
+    return getBler(itxmode, cqi, snr);
+}
+
+
 } //namespace
 

@@ -20,6 +20,7 @@
 #include "common/LteCommon.h"
 #include "stack/backgroundTrafficGenerator/IBackgroundTrafficManager.h"
 #include "stack/sdap/utils/QosHandler.h"
+#include "stack/mac/packet/LteSchedulingGrant_m.h"
 
 namespace simu5g {
 
@@ -53,6 +54,28 @@ class LteMacEnb : public LteMacBase
     /// Reference to the background traffic manager
     std::map<double, IBackgroundTrafficManager *> bgTrafficManager_;
 
+    // current slot number
+    int slot_nr;
+    int hp_cycle_cntr;
+    bool periodic_flows_arrived;
+    // current tdd cycle counter
+    unsigned long long tdd_cycle_cntr;
+
+    // current UL slot offset for the UL scheduler
+    int schedule_slot_offset;
+
+     // minimum amount of blocks assigned to guarantee connectivity to the node
+    int min_block_amount;
+
+    int PDCCH_slot_ = -1;
+
+    std::map<MacNodeId, TSCAIConfiguration> tcsaiMappingTable;
+    std::map<MacNodeId, std::vector<ConfiguredGrant>> historyCGsHP;
+    int tscaiHP = -1;
+    double cg_preparation_time = -1;
+    int minMcsIndex = -1;
+    int staticMcsIndex = -1;
+
     /*******************************************************************************************/
 
     /// Buffer for the BSRs
@@ -84,7 +107,7 @@ class LteMacEnb : public LteMacBase
      * Creates scheduling grants (one for each nodeId) according to the Schedule List.
      * It sends them to the lower layer.
      */
-    virtual void sendGrants(std::map<double, LteMacScheduleList> *scheduleList);
+    virtual void sendGrants(std::map<double, LteMacScheduleList> *scheduleList, int slot_offset);
 
     /**
      * macPduMake() creates MAC PDUs (one for each CID)
@@ -143,6 +166,12 @@ class LteMacEnb : public LteMacBase
      * Main loop.
      */
     void handleSelfMessage() override;
+
+    /**
+     * returns current slot type (special, DL, UL, FDD (=-1))
+     */
+    SlotType defineSlotType();
+
     /**
      * macHandleFeedbackPkt is called every time a feedback packet arrives on MAC.
      */
@@ -153,6 +182,10 @@ class LteMacEnb : public LteMacBase
      */
     void macHandleRac(cPacket *pkt) override;
 
+    /*
+     * Receives and handles SR.
+     */
+    void macHandleSR(cPacket* pktAux) override;
     /*
      * Update UserTxParam stored in every lteMacPdu when an RTX changes this information.
      */
@@ -216,6 +249,8 @@ class LteMacEnb : public LteMacBase
      */
     SchedDiscipline getSchedDiscipline(Direction dir);
 
+    SchedDiscipline getDynSchedDiscipline();
+
     /*
      * Return the current active set (active connections).
      * @param direction
@@ -269,7 +304,31 @@ class LteMacEnb : public LteMacBase
             return qosHandler;
         }
 
+    int getMinBlockAmount(){ return min_block_amount;}
 
+    int getCurrentSlotOffset(){return schedule_slot_offset;}
+
+    int getSlotNr(){ return slot_nr; }
+
+    bool checkPDUStatus(double frequency, MacNodeId nodeId);
+
+    long long getTddCycleCntr(){ return tdd_cycle_cntr;}
+
+    int getMinMcsIndex(){ return minMcsIndex;}
+
+    int getStaticMcsIndex(){ return staticMcsIndex;}
+
+    bool compareCGs(const inet::IntrusivePtr<const LteSchedulingGrant>& a, const inet::IntrusivePtr<const LteSchedulingGrant>& b) const;
+
+    int getTscaiHP(){ return tscaiHP; }
+    
+    int getCGPreparationTime() {return cg_preparation_time;}
+
+    int getHpCycleCntr(){ return hp_cycle_cntr; }
+
+    bool getPeriodicFlowsCompleted(){ return periodic_flows_arrived; }
+
+    void setPeriodicFlowsCompleted(bool arrived_) { this->periodic_flows_arrived = arrived_;}
 };
 
 } //namespace

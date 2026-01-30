@@ -84,7 +84,7 @@ bool LteAllocatorBestFit::checkConflict(const CGMatrix *cgMatrix, MacNodeId node
     return conflict;
 }
 
-void LteAllocatorBestFit::prepareSchedule()
+void LteAllocatorBestFit::prepareSchedule(bool static_scheduling)
 {
     EV << NOW << " LteAllocatorBestFit::schedule " << eNbScheduler_->mac_->getMacNodeId() << endl;
 

@@ -350,7 +350,7 @@ void LteMaxCiOptMB::generateProblem()
     appFileStream.close();
 }
 
-void LteMaxCiOptMB::prepareSchedule()
+void LteMaxCiOptMB::prepareSchedule(bool static_scheduling)
 {
     EV << "LteMaxCiOptMB::prepareSchedule - TEST" << endl;
 

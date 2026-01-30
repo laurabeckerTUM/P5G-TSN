@@ -34,12 +34,18 @@ simple LteMacBase like ILteMac
         bool muMimo = default(true);
 
         //# H-ARQ
-        int harqProcesses = default(8);
+        int harqProcesses = default(16);
         int maxHarqRtx = default(3);
         int harqFbEvaluationTimer = default(4);              // number of slots for sending back HARQ FB
 
         //# Statistics display (in GUI)
         bool statDisplay = default(false);
+
+        // minimum amount of blocks which are granted after a RAC or SR
+        int MinBlockAmount = default(1);
+        
+         // slot for the gNB to schedule the uplink grants in case a TDD pattern is defined
+        int PDCCH_slot = default(1);
 
         //#
         //# Statistics recording
@@ -72,6 +78,8 @@ simple LteMacBase like ILteMac
         @statistic[macBufferOverFlowD2D](title="Mac buffer overflow as function of time"; unit="Byte/s"; source="macBufferOverFlowD2D"; record=mean);
         @signal[harqErrorRateUl];
         @statistic[harqErrorRateUl](title="Harq Error Rate Ul"; unit=""; source="harqErrorRateUl"; record=mean,vector);
+        @signal[harqErrorRateUlPeriodic];
+        @statistic[harqErrorRateUlPeriodic](title="Harq Error Rate Ul"; unit=""; source="harqErrorRateUlPeriodic"; record=mean,vector);
         @signal[harqErrorRateDl];
         @statistic[harqErrorRateDl](title="Harq Error Rate Dl"; unit=""; source="harqErrorRateDl"; record=mean,vector);
         @signal[harqTxAttemptsDl];

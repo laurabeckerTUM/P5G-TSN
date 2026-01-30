@@ -21,7 +21,7 @@ using namespace omnetpp;
 
 bool debug = false;
 
-void LteMaxCiMultiband::prepareSchedule()
+void LteMaxCiMultiband::prepareSchedule(bool static_scheduling)
 {
     activeConnectionTempSet_ = *activeConnectionSet_;
     unsigned int byPs = 0;

@@ -30,6 +30,8 @@ class NRMacGnb : public LteMacEnbD2D
 
     virtual void handleMessage(inet::cMessage* msg) override;
 
+    void sendGrants(std::map<double, LteMacScheduleList> *scheduleList, int slot_offset) override;
+
     //virtual bool bufferizePacket(inet::cPacket* pkt);
 
     //virtual void handleUpperMessage(cPacket* pkt);

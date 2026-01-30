@@ -16,7 +16,7 @@ namespace simu5g {
 
 using namespace omnetpp;
 
-void LteDrr::prepareSchedule()
+void LteDrr::prepareSchedule(bool static_scheduling)
 {
     activeTempList_ = activeList_;
     drrTempMap_ = drrMap_;

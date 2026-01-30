@@ -43,8 +43,12 @@ simple ComponentCarrier
     // THIS IS TO BE DONE
 //    int tddSlotFormatIndex = default(-1); // -1 stands for FDD
 
-        bool useTdd = default(false);
-        int tddNumSymbolsDl = default(7);
-        int tddNumSymbolsUl = default(7);
+    bool useTdd = default(false);
+    int tddNumSymbolsDl = default(7);
+    int tddNumSymbolsUl = default(7);
+    int tddNumSlotsDl 	= default(7);
+    int tddNumSlotsUl 	= default(2);
+    int tddPatternPeriodicity = default(10); // is defined in terms of slots --> has to be checked!
+
 }
 

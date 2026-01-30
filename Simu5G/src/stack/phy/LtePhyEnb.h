@@ -56,6 +56,8 @@ class LtePhyEnb : public LtePhyBase
 
     virtual void emitDistanceFromMaster() {}
 
+    static simsignal_t numAirFrameNotReceivedSignal_;
+
   public:
     ~LtePhyEnb() override;
 

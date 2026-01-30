@@ -170,5 +170,27 @@ const unsigned int nInfoToTbs[TBSTABLESIZE] =
     3624, 3752, 3824
 };
 
+int NRMcsTable::getCqiForMcsIndex(int mcsIndex) const
+{
+    unsigned int nMcsEntries = /* number of entries in table[]*/
+        (extended_ ? 28u : 28u); 
+    if (mcsIndex >= 29u) { 
+        mcsIndex = (mcsIndex > 0 ? mcsIndex % 29u : 28u);
+    }
+
+    // get coderate (or rate) for the MCS entry
+    double mcsRate = table[mcsIndex].coderate_; 
+
+    // find smallest CQI such that cqiTable[cqi-1].rate_ >= mcsRate
+    for (unsigned int c = 0; c < 15u; ++c) {
+        if (cqiTable[c].rate_ >= mcsRate)
+            return static_cast<int>(c + 1); // CQI are 1..15
+    }
+
+    // fallback to the highest CQI
+    return 15;
+}
+
+
 } //namespace
 

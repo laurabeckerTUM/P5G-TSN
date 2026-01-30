@@ -71,7 +71,7 @@ class LteAllocatorBestFit : public virtual LteScheduler
 
     LteAllocatorBestFit(Binder *binder);
 
-    void prepareSchedule() override;
+    void prepareSchedule(bool static_scheduling = false) override;
 
     void commitSchedule() override;
 

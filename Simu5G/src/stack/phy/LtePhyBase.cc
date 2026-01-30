@@ -17,7 +17,7 @@ namespace simu5g {
 
 using namespace omnetpp;
 
-short LtePhyBase::airFramePriority_ = 10;
+short LtePhyBase::airFramePriority_ = 0;
 
 //Statistics
 simsignal_t LtePhyBase::averageCqiDlSignal_ = registerSignal("averageCqiDl");
@@ -119,7 +119,8 @@ void LtePhyBase::handleUpperMessage(cMessage *msg)
     if (lteInfo->getFrameType() == HARQPKT
         || lteInfo->getFrameType() == GRANTPKT
         || lteInfo->getFrameType() == RACPKT
-        || lteInfo->getFrameType() == D2DMODESWITCHPKT)
+        || lteInfo->getFrameType() == D2DMODESWITCHPKT
+        || lteInfo->getFrameType() == SCHEDULINGREQPKT)
     {
         frame = new LteAirFrame("harqFeedback-grant");
     }

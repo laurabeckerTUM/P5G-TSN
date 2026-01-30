@@ -78,7 +78,10 @@ bool LteSchedulerEnbUl::racschedule(double carrierFrequency, BandLimitVector *ba
     auto map_it = racStatus_.find(carrierFrequency);
     if (map_it != racStatus_.end()) {
         RacStatus& racStatus = map_it->second;
-        for (const auto& [nodeId, _] : racStatus) {
+
+        for (auto it = racStatus.begin(); it != racStatus.end(); ) {
+            MacNodeId nodeId = it->first;
+        //for (const auto& [nodeId, _] : racStatus) {
             EV << NOW << " LteSchedulerEnbUl::racschedule handling RAC for node " << nodeId << endl;
 
             const UserTxParams& txParams = mac_->getAmc()->computeTxParams(nodeId, UL, carrierFrequency);    // get the user info
@@ -127,34 +130,80 @@ bool LteSchedulerEnbUl::racschedule(double carrierFrequency, BandLimitVector *ba
 
             // FIXME default behavior
             // try to allocate one block to selected UE on at least one logical band of MACRO antenna, first codeword
-
             const unsigned int cw = 0;
-            const unsigned int blocks = 1;
-
             bool allocation = false;
-
             unsigned int size = bandLim->size();
-            for (Band b = 0; b < size; ++b) {
-                // if the limit flag is set to skip, jump off
-                int limit = bandLim->at(b).limit_.at(cw);
-                if (limit == -2) {
-                    EV << "LteSchedulerEnbUl::racschedule - skipping logical band according to limit value" << endl;
-                    continue;
-                }
+            int allocated_bytes = 0;
+            int allocated_blocks = 0;
 
-                if (allocator_->availableBlocks(nodeId, MACRO, b) > 0) {
-                    unsigned int bytes = mac_->getAmc()->computeBytesOnNRbs(nodeId, b, cw, blocks, UL, carrierFrequency);
-                    if (bytes > 0) {
+            auto psfpRateTable = binder_->getGlobalDataModule()->getPSFPRateMappingTable();
+            auto iter = psfpRateTable.find(nodeId);
 
-                        allocator_->addBlocks(MACRO, b, nodeId, 1, bytes);
-                        racAllocatedBlocks++;
 
-                        EV << NOW << "LteSchedulerEnbUl::racschedule UE: " << nodeId << "Handled RAC on band: " << b << endl;
+            if (iter == psfpRateTable.end()){
+                EV << "UE is not in PSFPRate table, consider minBlockAmount = " << mac_->getMinBlockAmount() << endl;
 
-                        allocation = true;
-                        break;
+                for (Band b = 0; b < size; ++b) {
+                    // if the limit flag is set to skip, jump off
+                    int limit = bandLim->at(b).limit_.at(cw);
+                    if (limit == -2) {
+                        EV << "LteSchedulerEnbUl::racschedule - skipping logical band according to limit value" << endl;
+                        continue;
+                    }
+                    int availableBlocks = allocator_->availableBlocks(nodeId, MACRO, b);
+
+                    if (availableBlocks > 0) {
+
+                        int bytes = mac_->getAmc()->computeBytesOnNRbs(nodeId, b, cw, 1, UL, carrierFrequency);
+
+                        if (bytes > 0) {
+
+                            allocator_->addBlocks(MACRO, b, nodeId, 1, bytes);
+                            allocated_blocks+=1;
+                            racAllocatedBlocks+= 1;
+                            allocated_bytes += bytes;
+
+                            EV << NOW << "LteSchedulerEnbUl::racschedule UE: " << nodeId << "Handled RAC on band: " << b << endl;
+
+                            allocation = true;
+                            if (allocated_blocks == mac_->getMinBlockAmount())
+                                break;
+
+                        }
                     }
                 }
+            } else {  
+
+                for (Band b = 0; b < size; ++b) {
+                    // if the limit flag is set to skip, jump off
+                    int limit = bandLim->at(b).limit_.at(cw);
+                    if (limit == -2) {
+                        EV << "LteSchedulerEnbUl::racschedule - skipping logical band according to limit value" << endl;
+                        continue;
+                    }
+
+                    int availableBlocks = allocator_->availableBlocks(nodeId, MACRO, b);
+                    
+                    if (availableBlocks > 0) {
+                        int bytes =  mac_->getAmc()->computeBytesOnNRbs(nodeId, b, cw, 1, UL, carrierFrequency); 
+                        
+                        if (bytes > 0) {
+
+                            allocator_->addBlocks(MACRO, b, nodeId, 1, bytes);
+                            racAllocatedBlocks+= 1;
+                            allocated_blocks+=1;
+                            allocated_bytes += bytes;
+
+                            EV << NOW << "LteSchedulerEnbUl::racschedule UE: " << nodeId << "Handled RAC on band: " << b << "racAllocatedBlocks " << racAllocatedBlocks << endl;
+
+                            allocation = true;
+                            EV << "allocated_bytes" <<  allocated_bytes <<psfpRateTable[nodeId].mdbv << endl;
+                            if (allocated_bytes >=  psfpRateTable[nodeId].mdbv)
+                                break;
+                        }
+                    }
+                }
+
             }
 
             if (allocation) {
@@ -162,12 +211,16 @@ bool LteSchedulerEnbUl::racschedule(double carrierFrequency, BandLimitVector *ba
                 MacCid cid = idToMacCid(nodeId, SHORT_BSR);  // build the cid. Since this grant will be used for a BSR,
                                                              // we use the LCID corresponding to the SHORT_BSR
                 std::pair<unsigned int, Codeword> scListId = {cid, cw};
-                scheduleList_[carrierFrequency][scListId] = blocks;
+                scheduleList_[carrierFrequency][scListId] = allocated_blocks;
+                it = racStatus.erase(it);
+            } else {
+                // NO allocation — keep RAC entry for next round and advance iterator
+                ++it;
             }
         }
-
+        
         // clean up all requests
-        racStatus.clear();
+        //racStatus.clear();
     }
 
     if (racAllocatedBlocks < numBands) {
@@ -937,6 +990,19 @@ void LteSchedulerEnbUl::removePendingRac(MacNodeId nodeId)
         if (elem_it != item.second.end())
             item.second.erase(nodeId);
     }
+}
+
+bool LteSchedulerEnbUl::checkPDUStatus(double frequency, MacNodeId nodeId){
+    auto it = pduSessions_.find(frequency);
+    if (it == pduSessions_.end()) {
+        return false;  // Frequency not found
+    }
+    const PDUStatus& status = it->second;
+    auto nodeIt = status.find(nodeId);
+    if (nodeIt == status.end()) {
+        return false;  // NodeId not found in that frequency
+    }
+    return nodeIt->second;
 }
 
 } //namespace

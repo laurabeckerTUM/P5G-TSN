@@ -340,7 +340,14 @@ bool LteAllocationModule::addBlocks(const Remote antenna, const Band band, const
     usedInLastSlot_ = true;
 
     EV << NOW << " LteAllocator::addBlocks " << dirToA(dir_) << " - Node " << nodeId << ", the request of " << blocks << " blocks on band " << band << " satisfied" << endl;
+    auto tcsaiMappingTable = mac_->getBinder()->getGlobalDataModule()->getTscaiMappingTable();
+    auto iter = tcsaiMappingTable.find(nodeId);
+    int slot_offset = mac_->getCurrentSlotOffset();
+    int hp_cycle_cntr = mac_->getHpCycleCntr();
 
+    if (iter != tcsaiMappingTable.end()) {
+        storeGrant(hp_cycle_cntr, slot_offset, nodeId, antenna, band, blocks, bytes);
+    }
     return true;
 }
 
@@ -397,6 +404,93 @@ unsigned int LteAllocationModule::rbOccupation(const MacNodeId nodeId, RbMap& rb
     }
     return blocks;
 }
+
+void LteAllocationModule::storeGrant(int hpCycle, int slotOffset, MacNodeId nodeId,
+                                     Remote antenna, Band band,
+                                     unsigned int blocks, unsigned int bytes)
+{
+    // Build the key for this allocation
+    AllocationKey allocKey;
+    allocKey.hpCycle = hpCycle;
+    allocKey.slotOffset = slotOffset;
+    allocKey.nodeId = nodeId;
+    allocKey.band = band;
+
+    AllocationInfo info;
+    info.antenna = antenna;
+    info.band = band;
+    info.blocks = blocks;
+    info.bytes = bytes;
+
+    // Check if a grant already exists for this key
+    auto it = hpSchedule_.find(allocKey);
+    if (it != hpSchedule_.end()) {
+        const AllocationInfo& existing = it->second;
+
+        // Compare existing allocation to the new one
+        if (existing.blocks == blocks && existing.bytes == bytes && existing.antenna == antenna) {
+            /*EV << NOW << "LteAllocationModule::storeGrant - Existing grant is identical for "
+               << "HP cycle=" << hpCycle
+               << " slot=" << slotOffset
+               << " node=" << nodeId
+               << " band=" << band
+               << " (no replacement needed)" << endl;*/
+        } else {
+           /* EV << NOW << "LteAllocationModule::storeGrant - Replacing existing grant for "
+               << "HP cycle=" << hpCycle
+               << " slot=" << slotOffset
+               << " node=" << nodeId
+               << " band=" << band
+               << " old blocks=" << existing.blocks
+               << " old bytes=" << existing.bytes
+               << " with new blocks=" << blocks
+               << " new bytes=" << bytes
+               << endl;*/
+
+            // Replace the allocation
+            hpSchedule_[allocKey] = info;
+        }
+    } else {
+        // No existing grant, insert new
+        hpSchedule_[allocKey] = info;
+
+        /*EV << NOW << "LteAllocationModule::storeGrant - Stored new allocation for "
+           << "HP cycle=" << hpCycle
+           << " slot=" << slotOffset
+           << " node=" << nodeId
+           << " band=" << band
+           << " blocks=" << blocks
+           << " bytes=" << bytes
+           << endl;*/
+    }
+}
+
+
+
+void LteAllocationModule::applyStaticGrants(int hpCycle, int slotOffset)
+{
+    // Iterate over all saved allocations in the map
+    for (const auto& entry : hpSchedule_) {
+        const AllocationKey& key = entry.first;
+        const AllocationInfo& info = entry.second;
+
+        // Only apply allocations that match the requested HP cycle and slot offset
+        if (key.hpCycle == hpCycle && key.slotOffset == slotOffset) {
+            // Call your existing addBlocks() function
+            bool success = addBlocks(info.antenna, info.band, key.nodeId, info.blocks, info.bytes);
+
+            if (!success) {
+                EV << NOW << "LteAllocationModule::applySavedGrants - Failed to apply grant for node "
+                   << key.nodeId << " slot=" << slotOffset << " band=" << key.band << endl;
+            } else {
+                EV << NOW << "LteAllocationModule::applySavedGrants - Applied grant for node "
+                   << key.nodeId << " slot=" << slotOffset << " band=" << key.band
+                   << " blocks=" << info.blocks << " bytes=" << info.bytes << endl;
+            }
+        }
+    }
+}
+
 
 } //namespace
 

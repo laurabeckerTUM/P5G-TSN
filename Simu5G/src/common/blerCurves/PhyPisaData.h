@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include "common/blerCurves/BLERvsSINR_15CQI_TU.h"
+#include "stack/mac/amc/NRMcs.h"
 
 namespace simu5g {
 
@@ -47,6 +48,9 @@ class PhyPisaData
 
     void setBlerShift(int shift) { blerShift_ = shift; }
     double getChannel(unsigned int i);
+
+    double getBlerForMcs(int itxmode, unsigned int mcsIndex, int snr, const NRMcsTable &mcsTable);
+
 };
 
 } //namespace

@@ -37,4 +37,5 @@ packet AirFrame extends cPacket
     double carrierFrequency;
     double bandwidth;
     ModulationType modulationType;
+    int mcsIndex = -1;
 }

@@ -186,7 +186,15 @@ const ApplicationTable applications[] = {
     ELEM(CBR),
     ELEM(FTP),
     ELEM(FULLBUFFER),
-    ELEM(UNKNOWN_APP)
+    ELEM(TSN0),
+    ELEM(TSN1),
+    ELEM(TSN2),
+    ELEM(TSN3),
+    ELEM(TSN4),
+    ELEM(TSN5),
+    ELEM(TSN6),
+    ELEM(TSN7),
+    ELEM(UNKNOWN_APP), 
 };
 
 /**************************
@@ -208,6 +216,8 @@ const SchedDisciplineTable disciplines[] = {
     ELEM(MAXCI_COMP),
     ELEM(ALLOCATOR_BESTFIT),
     ELEM(DQOS),
+    ELEM(TSN_SCHEDULER),
+    ELEM(MIXED),
     ELEM(UNKNOWN_DISCIPLINE)
 };
 
@@ -283,6 +293,11 @@ const DeploymentScenarioMapping DeploymentScenarioTable[] = {
     ELEM(URBAN_MACROCELL),
     ELEM(RURAL_MACROCELL),
     ELEM(SUBURBAN_MACROCELL),
+    ELEM(INDOOR_FACTORY_SL),
+    ELEM(INDOOR_FACTORY_DL),
+    ELEM(INDOOR_FACTORY_SH),
+    ELEM(INDOOR_FACTORY_DH),
+    ELEM(OPTIMAL),
     ELEM(UNKNOW_SCENARIO)
 };
 
@@ -446,6 +461,8 @@ const unsigned int PDCP_HEADER_AM = 2;
 const unsigned int RLC_HEADER_UM = 2; // TODO
 const unsigned int RLC_HEADER_AM = 2; // TODO
 const unsigned int MAC_HEADER = 2;
+const unsigned int PPP_TRAILER = 2;
+const unsigned int PPP_HEADER = 5;
 const unsigned int MAXGRANT = 4294967295U;
 
 /*****************
@@ -518,10 +535,10 @@ typedef std::set<MacNodeId> UeSet;
 #define HARQ_NONE                255
 
 /// Number of harq tx processes
-#define ENB_TX_HARQ_PROCESSES    8
-#define UE_TX_HARQ_PROCESSES     8
-#define ENB_RX_HARQ_PROCESSES    8
-#define UE_RX_HARQ_PROCESSES     8
+#define ENB_TX_HARQ_PROCESSES    16
+#define UE_TX_HARQ_PROCESSES     16
+#define ENB_RX_HARQ_PROCESSES    16
+#define UE_RX_HARQ_PROCESSES     16
 
 /// time interval between two transmissions of the same pdu
 #define HARQ_TX_INTERVAL         7 * TTI
@@ -606,6 +623,15 @@ struct SlotFormat {
     unsigned int numFlexSymbols;
 };
 
+struct TddPattern{
+    bool tdd;
+    unsigned int numDlSlots;
+    unsigned int numUlSlots;
+    unsigned int Periodicity;
+    SlotFormat sharedSlot;
+    NumerologyIndex numerologyIndex;
+};
+
 struct CarrierInfo {
     double carrierFrequency;
     unsigned int numBands;
@@ -614,7 +640,14 @@ struct CarrierInfo {
     BandLimitVector bandLimit;
     NumerologyIndex numerologyIndex;
     SlotFormat slotFormat;
+    TddPattern tddPattern;
 };
+
+enum SlotType {
+    DL_SLOT = 0, SHARED_SLOT = 1, UL_SLOT = 2, FDD = 3
+};
+
+
 typedef std::map<double, CarrierInfo> CarrierInfoMap;
 
 /*************************************

@@ -177,6 +177,35 @@ class LteAllocationModule
      */
     std::vector<std::vector<AllocatedRbsPerBandMap>> prevAllocatedRbsPerBand_;
 
+
+    // Represents one allocation entry for a UE in a given slot
+    struct AllocationInfo {
+        Remote antenna;         // antenna/sector
+        Band band;              // frequency band
+        unsigned int blocks;    // number of RBs allocated
+        unsigned int bytes;     // bytes mapped to this allocation
+    };
+
+    struct AllocationKey {
+        int hpCycle;       // which hyperperiod cycle
+        int slotOffset;    // slot index inside HP
+        MacNodeId nodeId;  // UE
+        Band band;         // frequency band
+
+        bool operator<(const AllocationKey& other) const {
+            if (hpCycle != other.hpCycle) return hpCycle < other.hpCycle;
+            if (slotOffset != other.slotOffset) return slotOffset < other.slotOffset;
+            if (nodeId != other.nodeId) return nodeId < other.nodeId;
+            return band < other.band;
+        }
+    };
+
+    void storeGrant(int hpCycle, int slotOffset, MacNodeId nodeId,
+                                     Remote antenna, Band band,
+                                     unsigned int blocks, unsigned int bytes);
+
+    std::map<AllocationKey, AllocationInfo> hpSchedule_;
+
   public:
 
     /// Default constructor.
@@ -327,6 +356,7 @@ class LteAllocationModule
         return bands_;
     }
 
+    void applyStaticGrants(int hpCycle, int slotOffset);
 };
 
 } //namespace

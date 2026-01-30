@@ -13,6 +13,7 @@
 #define _LTE_LTEMACBASE_H_
 
 #include <inet/common/ModuleRefByPar.h>
+#include "stack/mac/packet/LteSchedulingGrant_m.h"
 
 #include "common/binder/Binder.h"
 #include "common/LteCommon.h"
@@ -49,6 +50,17 @@ typedef std::pair<MacCid, LteMacBuffer *> CidBufferPair;
 typedef std::pair<LteTrafficClass, CidBufferPair> LcgPair;
 typedef std::multimap<LteTrafficClass, CidBufferPair> LcgMap;
 
+// Periodic grants are stored separately and never erased until expiration
+struct ConfiguredGrant {
+    int slotOffset;
+    int period;
+    int HPCycle;
+    inet::IntrusivePtr<LteSchedulingGrant> grant;
+    bool active;
+    bool scheduledThisRound;
+    double carrierFrequency;
+};
+
 /**
  * @class LteMacBase
  * @brief MAC Layer
@@ -76,6 +88,7 @@ class LteMacBase : public cSimpleModule
     static simsignal_t receivedPacketFromLowerLayerSignal_;
     static simsignal_t sentPacketToUpperLayerSignal_;
     static simsignal_t sentPacketToLowerLayerSignal_;
+    static simsignal_t macCGRescheduledSignal_;
 
     /*
      * Data Structures
@@ -180,6 +193,7 @@ class LteMacBase : public cSimpleModule
     unsigned int totalHarqErrorRateUlCount_ = 0;
 
   public:
+    static simsignal_t selectedMcsSignal_;
 
     /**
      * Initializes MAC Buffers
@@ -331,6 +345,10 @@ class LteMacBase : public cSimpleModule
     virtual void discardMacPdu(const inet::Packet *macPdu);
     virtual void discardRlcPdu(inet::IntrusivePtr<const UserControlInfo> lteInfo, unsigned int rlcSno);
 
+    const inet::ModuleRefByPar<Binder>& getBinder() const {
+        return binder_;
+    }
+
   protected:
 
     int numInitStages() const override { return inet::NUM_INIT_STAGES; }
@@ -423,6 +441,9 @@ class LteMacBase : public cSimpleModule
      * Receives and handles RAC requests (eNodeB implementation) and responses (LteMacUe implementation)
      */
     virtual void macHandleRac(cPacket *pkt)
+    {
+    }
+    virtual void macHandleSR(cPacket *pkt)
     {
     }
 

@@ -32,7 +32,7 @@ class NRAmc : public LteAmc
     unsigned int getResourceElements(unsigned int blocks, unsigned int symbolsPerSlot);
     unsigned int computeTbsFromNinfo(double nInfo, double coderate);
 
-    unsigned int computeCodewordTbs(UserTxParams *info, Codeword cw, Direction dir, unsigned int numRe);
+    unsigned int computeCodewordTbs(UserTxParams *info, Codeword cw, Direction dir, unsigned int numRe, int minMcsIndex = -1, int staticMcsIndex = -1);
 
   public:
 
@@ -42,10 +42,10 @@ class NRAmc : public LteAmc
 
     NRAmc(LteMacEnb *mac, Binder *binder, CellInfo *cellInfo, int numAntennas);
 
-    NRMCSelem getMcsElemPerCqi(Cqi cqi, const Direction dir);
+    NRMCSelem getMcsElemPerCqi(Cqi cqi, const Direction dir, int minMcsIndex = -1,  int staticMcsIndex = -1) override;
 
-    unsigned int computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency) override;
-    unsigned int computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency) override;
+    unsigned int computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex = -1, int staticMcsIndex = -1) override;
+    unsigned int computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex = -1, int staticMcsIndex = -1) override;
     unsigned int computeBitsPerRbBackground(Cqi cqi, const Direction dir, double carrierFrequency) override;
 
 };

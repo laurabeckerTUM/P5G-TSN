@@ -56,7 +56,7 @@ bool LteMaxCiComp::getBandLimit(std::vector<BandLimit> *bandLimit, MacNodeId ueI
     return true;
 }
 
-void LteMaxCiComp::prepareSchedule()
+void LteMaxCiComp::prepareSchedule(bool static_scheduling)
 {
     EV << NOW << " LteMaxCiComp::schedule " << eNbScheduler_->mac_->getMacNodeId() << endl;
 
@@ -138,7 +138,11 @@ void LteMaxCiComp::prepareSchedule()
         bool terminate = false;
         bool active = true;
         bool eligible = true;
-        unsigned int granted = requestGrant(current.x_, 4294967295U, terminate, active, eligible, bandLim);
+        bool static_grant = false;
+        int minMcs = -1;
+        int staticMcs = -1;
+
+        unsigned int granted = requestGrant(current.x_, 4294967295U, terminate, active, eligible, static_grant, minMcs, staticMcs, bandLim);
 
         EV << NOW << "LteMaxCiComp::schedule granted " << granted << " bytes to connection " << current.x_ << endl;
 

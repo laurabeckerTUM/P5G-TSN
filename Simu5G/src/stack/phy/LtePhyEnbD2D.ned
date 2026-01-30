@@ -22,4 +22,7 @@ simple LtePhyEnbD2D extends LtePhyEnb
     parameters:
         @class("LtePhyEnbD2D");
         bool enableD2DCqiReporting = default(true);
+        @signal[numAirFrameNotReceivedSignal_];
+        @statistic[numAirFrameNotReceived](title="numAirFrameNotReceived"; unit=""; source="numAirFrameNotReceivedSignal_"; record=vector);
+
 }

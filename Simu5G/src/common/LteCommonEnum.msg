@@ -45,7 +45,7 @@ enum RbAllocationType
 /// Lte Traffic Classes
 enum LteTrafficClass
 {
-    CONVERSATIONAL = 0; STREAMING =1;  INTERACTIVE = 2; BACKGROUND = 3; HIGH_PRIORITY_TSN = 4; UNKNOWN_TRAFFIC_TYPE = 5;
+    CONVERSATIONAL = 0; STREAMING =1;  INTERACTIVE = 2; BACKGROUND = 3; HIGH_PRIORITY_TSN = 4; TSN0_TC = 5; TSN1_TC = 6; TSN2_TC = 7; TSN3_TC = 8; TSN4_TC = 9; TSN5_TC = 10; TSN6_TC = 11; TSN7_TC = 12; UNKNOWN_TRAFFIC_TYPE = 13; 
 };
 
 /// Scheduler grant type
@@ -88,8 +88,15 @@ enum ApplicationType
     GAMING = 5;
     FULLBUFFER = 6;
     NETWORK_CONTROL = 7;
-    UNKNOWN_APP = 8;
-    
+    TSN0 = 8;
+    TSN1 = 9;
+    TSN2 = 10;
+    TSN3 = 11;
+    TSN4 = 12;
+    TSN5 = 13;
+    TSN6 = 14;
+    TSN7 = 15;
+    UNKNOWN_APP = 16;
 };
 
 
@@ -107,7 +114,9 @@ enum SchedDiscipline
     MAXCI_COMP = 5;
     ALLOCATOR_BESTFIT = 6;
     DQOS = 7;
-    UNKNOWN_DISCIPLINE = 8;
+    TSN_SCHEDULER = 8;
+    MIXED = 9;
+    UNKNOWN_DISCIPLINE = 10;
     
 };
 
@@ -165,7 +174,12 @@ enum DeploymentScenario
     URBAN_MACROCELL = 2;
     RURAL_MACROCELL = 3;
     SUBURBAN_MACROCELL = 4;
-    UNKNOW_SCENARIO = 5;
+    INDOOR_FACTORY_SL = 5;
+    INDOOR_FACTORY_DL = 6;
+    INDOOR_FACTORY_SH = 7;
+    INDOOR_FACTORY_DH = 8;
+    OPTIMAL = 9;
+    UNKNOW_SCENARIO = 10;
 };
 
 
@@ -194,7 +208,8 @@ enum LtePhyFrameType
     GRANTPKT = 5;
     RACPKT = 6;
     D2DMODESWITCHPKT = 7;
-    UNKNOWN_TYPE = 8;
+    SCHEDULINGREQPKT = 8;
+    UNKNOWN_TYPE = 9;
 };
 
 

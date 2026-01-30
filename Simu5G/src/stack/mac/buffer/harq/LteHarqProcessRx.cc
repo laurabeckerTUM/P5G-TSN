@@ -108,10 +108,12 @@ Packet *LteHarqProcessRx::createFeedback(Codeword cw)
         // NACK will be sent
         status_.at(cw) = RXHARQ_PDU_CORRUPTED;
 
-        EV << "LteHarqProcessRx::createFeedback - tx number " << (unsigned int)transmissions_ << endl;
-        if (transmissions_ == (maxHarqRtx_ + 1)) {
+        auto tcsaiMappingTable = binder_->getGlobalDataModule()->getTscaiMappingTable();
+        auto iter = tcsaiMappingTable.find(pduInfo->getSourceId());
+        if (transmissions_ == (maxHarqRtx_ + 1) || iter != tcsaiMappingTable.end()) {
             EV << NOW << " LteHarqProcessRx::createFeedback - max number of tx reached for cw " << cw << ". Resetting cw" << endl;
-
+            if (iter != tcsaiMappingTable.end())
+                EV << "No retransmission due to prealocation stream " << endl;
             // purge PDU
             purgeCorruptedPdu(cw);
             resetCodeword(cw);

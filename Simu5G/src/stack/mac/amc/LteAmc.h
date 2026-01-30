@@ -22,6 +22,7 @@
 #include "stack/mac/amc/UserTxParams.h"
 #include "stack/mac/LteMacEnb.h"
 #include "common/binder/Binder.h"
+#include "stack/mac/amc/NRMcs.h"
 
 namespace simu5g {
 
@@ -124,6 +125,7 @@ class LteAmc
 
     // CodeRate MCS rescaling
     void rescaleMcs(double rePerRb, Direction dir = DL);
+    virtual NRMCSelem getMcsElemPerCqi(Cqi cqi, const Direction dir, int minMcsIndex = -1,  int staticMcsIndex = -1);
 
     void pushFeedback(MacNodeId id, Direction dir, LteFeedback fb, double carrierFrequency);
     void pushFeedbackD2D(MacNodeId id, LteFeedback fb, MacNodeId peerId, double carrierFrequency);
@@ -144,10 +146,10 @@ class LteAmc
     const UserTxParams& getTxParams(MacNodeId id, const Direction dir, double carrierFrequency);
     const UserTxParams& setTxParams(MacNodeId id, const Direction dir, UserTxParams& info, double carrierFrequency);
     const UserTxParams& computeTxParams(MacNodeId id, const Direction dir, double carrierFrequency);
-    virtual unsigned int computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency);
-    virtual unsigned int computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency);
-    virtual unsigned int computeBytesOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency);
-    virtual unsigned int computeBytesOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency);
+    virtual unsigned int computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency,  int minMcsIndex = -1, int staticMcsIndex = -1);
+    virtual unsigned int computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency,  int minMcsIndex = -1, int staticMcsIndex = -1);
+    virtual unsigned int computeBytesOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex = -1, int staticMcsIndex = -1);
+    virtual unsigned int computeBytesOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex = -1, int staticMcsIndex = -1);
 
     virtual unsigned int computeBitsPerRbBackground(Cqi cqi, const Direction dir, double carrierFrequency);
 

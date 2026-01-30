@@ -30,17 +30,27 @@ unsigned int NRAmc::getSymbolsPerSlot(double carrierFrequency, Direction dir)
 {
     unsigned totSymbols = 14;   // TODO get this parameter from CellInfo/Carrier
 
-    // use a function from the binder
     SlotFormat sf = binder_->getSlotFormat(carrierFrequency);
+
     if (!sf.tdd)
         return totSymbols;
-
-    // TODO handle FLEX symbols: so far, they are used as guard (hence, not used for scheduling)
-    if (dir == DL)
-        return sf.numDlSymbols;
-    // else UL
-    return sf.numUlSymbols;
+    else if (dir == DL){
+        if (cellInfo_->getCurrentSlotType() == DL_SLOT)
+            return totSymbols;
+        else if (cellInfo_->getCurrentSlotType() == SHARED_SLOT)
+            return sf.numDlSymbols;
+    }
+    else if (dir == UL){
+        if (cellInfo_->getSlotTypeForULSchedule() == UL_SLOT){
+            return totSymbols;
+        }    
+        else if (cellInfo_->getSlotTypeForULSchedule() == SHARED_SLOT){
+            return sf.numUlSymbols;
+        }
+    }
+    return 0;
 }
+
 
 unsigned int NRAmc::getResourceElementsPerBlock(unsigned int symbolsPerSlot)
 {
@@ -105,10 +115,10 @@ unsigned int NRAmc::computeTbsFromNinfo(double nInfo, double coderate)
     return tbs;
 }
 
-unsigned int NRAmc::computeCodewordTbs(UserTxParams *info, Codeword cw, Direction dir, unsigned int numRe)
+unsigned int NRAmc::computeCodewordTbs(UserTxParams *info, Codeword cw, Direction dir, unsigned int numRe, int minMcsIndex, int staticMcsIndex)
 {
     std::vector<unsigned char> layers = info->getLayers();
-    NRMCSelem mcsElem = getMcsElemPerCqi(info->readCqiVector().at(cw), dir);
+    NRMCSelem mcsElem = getMcsElemPerCqi(info->readCqiVector().at(cw), dir, minMcsIndex, staticMcsIndex);
     unsigned int modFactor;
     switch (mcsElem.mod_) {
         case _QPSK:   modFactor = 2;
@@ -131,7 +141,7 @@ unsigned int NRAmc::computeCodewordTbs(UserTxParams *info, Codeword cw, Directio
 *      Scheduler interface functions      *
 *******************************************/
 
-unsigned int NRAmc::computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency)
+unsigned int NRAmc::computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex, int staticMcsIndex)
 {
     if (blocks == 0)
         return 0;
@@ -155,7 +165,7 @@ unsigned int NRAmc::computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks,
             continue;
         }
 
-        unsigned int tbs = computeCodewordTbs(&info, cw, dir, numRe);
+        unsigned int tbs = computeCodewordTbs(&info, cw, dir, numRe, minMcsIndex, staticMcsIndex);
         bits += tbs;
     }
 
@@ -166,7 +176,7 @@ unsigned int NRAmc::computeBitsOnNRbs(MacNodeId id, Band b, unsigned int blocks,
     return bits;
 }
 
-unsigned int NRAmc::computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency)
+unsigned int NRAmc::computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsigned int blocks, const Direction dir, double carrierFrequency, int minMcsIndex, int staticMcsIndex)
 {
     if (blocks == 0)
         return 0;
@@ -188,7 +198,7 @@ unsigned int NRAmc::computeBitsOnNRbs(MacNodeId id, Band b, Codeword cw, unsigne
         return 0;
     }
 
-    unsigned int tbs = computeCodewordTbs(&info, cw, dir, numRe);
+    unsigned int tbs = computeCodewordTbs(&info, cw, dir, numRe, minMcsIndex, staticMcsIndex);
 
     // DEBUG
     EV << NOW << " NRAmc::computeBitsOnNRbs Resource Blocks: " << blocks << "\n";
@@ -237,9 +247,9 @@ unsigned int NRAmc::computeBitsPerRbBackground(Cqi cqi, const Direction dir, dou
     return tbs;
 }
 
-NRMCSelem NRAmc::getMcsElemPerCqi(Cqi cqi, const Direction dir)
+NRMCSelem NRAmc::getMcsElemPerCqi(Cqi cqi, const Direction dir, int minMcsIndex, int staticMcsIndex)
 {
-    // CQI threshold table selection
+    NRMCSelem ret;
     NRMcsTable *mcsTable;
     if (dir == DL)
         mcsTable = &dlNrMcsTable_;
@@ -248,6 +258,24 @@ NRMCSelem NRAmc::getMcsElemPerCqi(Cqi cqi, const Direction dir)
     else {
         throw cRuntimeError("NRAmc::getIMcsPerCqi(): Unrecognized direction");
     }
+
+    if (staticMcsIndex != -1) {
+        if (dir == DL){
+            ret = dlNrMcsTable_.at(staticMcsIndex);
+            ret.index_ = staticMcsIndex;
+            return ret;
+        }
+        else if ((dir == UL) || (dir == D2D) || (dir == D2D_MULTI)){
+            mac_->emit(mac_->selectedMcsSignal_, staticMcsIndex);
+            ret = ulNrMcsTable_.at(staticMcsIndex);
+            ret.index_ = staticMcsIndex;
+            return ret;
+        }     
+        else
+            throw cRuntimeError("NRAmc::getMcsElemPerCqi(): Unrecognized direction");
+    }
+
+
     CQIelem entry = mcsTable->getCqiElem(cqi);
     LteMod mod = entry.mod_;
     double rate = entry.rate_;
@@ -257,17 +285,29 @@ NRMCSelem NRAmc::getMcsElemPerCqi(Cqi cqi, const Direction dir)
     unsigned int max = mcsTable->getMaxIndex(mod);
 
     // Initialize the working variables at the minimum value.
-    NRMCSelem ret = mcsTable->at(min);
+    ret = mcsTable->at(min);
 
     // Search in the McsTable from min to max until the rate exceeds
     // the coderate in an entry of the table.
+    int selected_mcs=0;
     for (unsigned int i = min; i <= max; i++) {
         NRMCSelem elem = mcsTable->at(i);
-        if (elem.coderate_ <= rate)
+        if (elem.coderate_ <= rate){
             ret = elem;
-        else
-            break;
+            selected_mcs = i;
+        }
+        else{
+            // --- Enforce minimum MCS value ---
+            if (i < minMcsIndex && minMcsIndex != -1) {
+                ret = mcsTable->at(minMcsIndex);
+                selected_mcs = minMcsIndex;
+            }
+            else
+                break;
+        }
     }
+    mac_->emit(mac_->selectedMcsSignal_, selected_mcs);
+    ret.index_ = selected_mcs;
 
     // Return the MCSElem found.
     return ret;

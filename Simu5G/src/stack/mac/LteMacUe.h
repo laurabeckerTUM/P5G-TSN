@@ -156,7 +156,7 @@ class LteMacUe : public LteMacBase
     /*
      * Access scheduling grant
      */
-    inline const LteSchedulingGrant *getSchedulingGrant(double carrierFrequency) const
+    virtual const LteSchedulingGrant *getSchedulingGrant(double carrierFrequency)
     {
         if (schedulingGrant_.find(carrierFrequency) == schedulingGrant_.end())
             return nullptr;

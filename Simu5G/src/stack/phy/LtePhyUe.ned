@@ -49,5 +49,6 @@ simple LtePhyUe extends LtePhyBase
         @statistic[averageCqiDl](title="Average Cqi reported in DL"; unit="cqi"; source="averageCqiDl"; record=mean,count,vector);
         @signal[averageCqiUl];
         @statistic[averageCqiUl](title="Average Cqi reported in UL"; unit="cqi"; source="averageCqiUl"; record=mean,count,vector);
+        @statistic[CqiUl](title="Average Cqi reported in UL"; unit="cqi"; source="averageCqiUl"; record=vector);
 }
 

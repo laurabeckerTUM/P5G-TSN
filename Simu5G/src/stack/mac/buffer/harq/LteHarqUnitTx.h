@@ -86,6 +86,7 @@ class LteHarqUnitTx : noncopyable
     static simsignal_t harqErrorRate_3Signal_[2];
     static simsignal_t harqErrorRate_4Signal_[2];
     static simsignal_t harqTxAttemptsSignal_[2];
+    static simsignal_t harqErrorRateSignalPeriodic;
 
   public:
     /**

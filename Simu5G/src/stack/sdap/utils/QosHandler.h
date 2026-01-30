@@ -136,7 +136,9 @@ public:
 		Enter_Method_Silent("getPrioritySortedQosInfos");
 		std::vector<std::pair<MacCid, QosInfo>> tmp;
 		for (auto &var : QosInfos) {
-			if (MacCidToLcid(var.first) != 0 && MacCidToLcid(var.first) != 10 && var.second.dir == dir)
+			if (dir == UL && MacCidToLcid(var.first) != 10 && var.second.dir == dir)
+				tmp.push_back(var);
+			else if (MacCidToLcid(var.first) != 0 && MacCidToLcid(var.first) != 10 && var.second.dir == dir)
 				tmp.push_back(var);
 		}
 		std::sort(tmp.begin(), tmp.end(), [&](std::pair<unsigned int, QosInfo> &a, std::pair<unsigned int, QosInfo> &b) {
@@ -150,7 +152,9 @@ public:
 		Enter_Method_Silent("getPdbSortedQosInfos");
 		std::vector<std::pair<MacCid, QosInfo>> tmp;
 		for (auto &var : QosInfos) {
-			if (MacCidToLcid(var.first) != 0 && MacCidToLcid(var.first) != 10 && var.second.dir == dir)
+			if (dir == UL && MacCidToLcid(var.first) != 10 && var.second.dir == dir)
+				tmp.push_back(var);
+			else if (MacCidToLcid(var.first) != 0 && MacCidToLcid(var.first) != 10 && var.second.dir == dir)
 				tmp.push_back(var);
 		}
 		std::sort(tmp.begin(), tmp.end(), [&](std::pair<unsigned int, QosInfo> &a, std::pair<unsigned int, QosInfo> &b) {
@@ -175,13 +179,13 @@ public:
 		if (getSimulation()->getSystemModule()->hasPar("qosModelPriority")) {
 			prio = getSimulation()->getSystemModule()->par("qosModelPriority").stdstringValue();
 
-			if(lambdaPriority == 1 && lambdaByteSize == 0 && lambdaCqi == 0 && lambdaRemainDelayBudget == 0 && lambdaRtx == 0){
+			/*if(lambdaPriority == 1 && lambdaByteSize == 0 && lambdaCqi == 0 && lambdaRemainDelayBudget == 0 && lambdaRtx == 0){
 				prio = "priority";
 			}else if(lambdaPriority == 0 && lambdaByteSize == 0 && lambdaCqi == 0 && lambdaRemainDelayBudget == 1 && lambdaRtx == 0){
 				prio = "pdb";
 			}else{
 				prio = "default";
-			}
+			}*/
 		}
 
 		//first item is the (calculated prio), second item is the cid
@@ -296,7 +300,6 @@ public:
     }
 
 
-
     //type is the application type V2X, VOD, VOIP, DATA_FLOW
     //returns the QFI which is pre-configured in QosHandler.ned file
     virtual unsigned short getQfi(ApplicationType type){
@@ -310,6 +313,22 @@ public:
             return dataQfi;
         case NETWORK_CONTROL:
             return networkControlQfi;
+		case TSN0:
+			return tsn0Qfi;
+		case TSN1:
+			return tsn1Qfi;
+		case TSN2:
+			return tsn2Qfi;
+		case TSN3:
+			return tsn3Qfi;
+		case TSN4:
+			return tsn4Qfi;
+		case TSN5:
+			return tsn5Qfi;
+		case TSN6:
+			return tsn6Qfi;
+		case TSN7:
+			return tsn7Qfi;
         default:
         	return dataQfi;
         }
@@ -317,7 +336,23 @@ public:
     virtual unsigned short getFlowQfi(std::string pktName){
         Enter_Method_Silent("getQfi value");
         auto qfi = 1;
-        if ((pktName.find("VoIP") == 0) || (pktName.find("audio") == 0)){
+		if (pktName.find("tsn0")==0)
+			return tsn0Qfi;
+		else if (pktName.find("tsn1")==0)
+			return tsn1Qfi;
+		else if (pktName.find("tsn2")==0)
+			return tsn2Qfi;
+		else if (pktName.find("tsn3")==0)
+			return tsn3Qfi;
+		else if (pktName.find("tsn4")==0)
+			return tsn4Qfi;
+		else if (pktName.find("tsn5")==0)
+			return tsn5Qfi;
+		else if (pktName.find("tsn6")==0)
+			return tsn6Qfi;
+		else if (pktName.find("tsn7")==0)
+			return tsn7Qfi;
+        else if ((pktName.find("VoIP") == 0) || (pktName.find("audio") == 0)){
             return voipQfi;
         }
         else if ((pktName.find("video") == 0) || (pktName.find("VOD") == 0)){
@@ -336,7 +371,24 @@ public:
 	virtual unsigned short get5Qi(unsigned short qfi) {
 
 		Enter_Method_Silent("get5Qi");
-		if (qfi == v2xQfi) {
+		 // TSN extensions
+        if (qfi == tsn0Qfi) {
+            return tsn0_5Qi;
+        } else if (qfi == tsn1Qfi) {
+            return tsn1_5Qi;
+        } else if (qfi == tsn2Qfi) {
+            return tsn2_5Qi;
+        } else if (qfi == tsn3Qfi) {
+            return tsn3_5Qi;
+        } else if (qfi == tsn4Qfi) {
+            return tsn4_5Qi;
+        } else if (qfi == tsn5Qfi) {
+            return tsn5_5Qi;
+        } else if (qfi == tsn6Qfi) {
+            return tsn6_5Qi;
+        } else if (qfi == tsn7Qfi) {
+            return tsn7_5Qi;
+        } else if (qfi == v2xQfi) {
 			return v2x5Qi;
 		} else if (qfi == videoQfi) {
 			return video5Qi;
@@ -366,6 +418,23 @@ public:
     	            return networkControlQfiToRadioBearer;
     	        case GAMING:
     	            return gamingQfiToRadioBearer;
+				// TSN extensions
+				case TSN0:
+					return tsn0QfiToRadioBearer;
+				case TSN1:
+					return tsn1QfiToRadioBearer;
+				case TSN2:
+					return tsn2QfiToRadioBearer;
+				case TSN3:
+					return tsn3QfiToRadioBearer;
+				case TSN4:
+					return tsn4QfiToRadioBearer;
+				case TSN5:
+					return tsn5QfiToRadioBearer;
+				case TSN6:
+					return tsn6QfiToRadioBearer;
+				case TSN7:
+					return tsn7QfiToRadioBearer;
     	        default:
     	            return dataQfiToRadioBearer;
     	        }
@@ -392,6 +461,33 @@ public:
 		this->dataQfiToRadioBearer = par("dataQfiToRadioBearer");
 		this->networkControlQfiToRadioBearer = par("networkControlQfiToRadioBearer");
 
+		 // TSN extensions
+        this->tsn0Qfi = par("tsn0Qfi");
+        this->tsn1Qfi = par("tsn1Qfi");
+        this->tsn2Qfi = par("tsn2Qfi");
+        this->tsn3Qfi = par("tsn3Qfi");
+        this->tsn4Qfi = par("tsn4Qfi");
+        this->tsn5Qfi = par("tsn5Qfi");
+        this->tsn6Qfi = par("tsn6Qfi");
+        this->tsn7Qfi = par("tsn7Qfi");
+
+        this->tsn0_5Qi = par("tsn0_5Qi");
+        this->tsn1_5Qi = par("tsn1_5Qi");
+        this->tsn2_5Qi = par("tsn2_5Qi");
+        this->tsn3_5Qi = par("tsn3_5Qi");
+        this->tsn4_5Qi = par("tsn4_5Qi");
+        this->tsn5_5Qi = par("tsn5_5Qi");
+        this->tsn6_5Qi = par("tsn6_5Qi");
+        this->tsn7_5Qi = par("tsn7_5Qi");
+
+        this->tsn0QfiToRadioBearer = par("tsn0QfiToRadioBearer");
+        this->tsn1QfiToRadioBearer = par("tsn1QfiToRadioBearer");
+        this->tsn2QfiToRadioBearer = par("tsn2QfiToRadioBearer");
+        this->tsn3QfiToRadioBearer = par("tsn3QfiToRadioBearer");
+        this->tsn4QfiToRadioBearer = par("tsn4QfiToRadioBearer");
+        this->tsn5QfiToRadioBearer = par("tsn5QfiToRadioBearer");
+        this->tsn6QfiToRadioBearer = par("tsn6QfiToRadioBearer");
+        this->tsn7QfiToRadioBearer = par("tsn7QfiToRadioBearer");
 	}
 
 
@@ -424,6 +520,12 @@ public:
     virtual double getPer(unsigned short _5Qi){
     	Enter_Method_Silent("getPer");
     	return getCharacteristic("PER", _5Qi);
+    }
+
+    virtual ResourceType getResType(unsigned short _5Qi) {
+        QosCharacteristic qosCharacteristics = NRQosCharacteristics::getNRQosCharacteristics()->getQosCharacteristic(_5Qi);
+        Enter_Method_Silent("getResType");
+        return qosCharacteristics.getResType();
     }
 
     virtual int getQfiFromPcp(std::string pktName){
@@ -460,6 +562,34 @@ protected:
     unsigned short voipQfiToRadioBearer;
     unsigned short dataQfiToRadioBearer;
     unsigned short networkControlQfiToRadioBearer;
+
+	 // TSN extensions
+    unsigned short tsn0Qfi;
+    unsigned short tsn1Qfi;
+    unsigned short tsn2Qfi;
+    unsigned short tsn3Qfi;
+    unsigned short tsn4Qfi;
+    unsigned short tsn5Qfi;
+    unsigned short tsn6Qfi;
+    unsigned short tsn7Qfi;
+
+    unsigned short tsn0_5Qi;
+    unsigned short tsn1_5Qi;
+    unsigned short tsn2_5Qi;
+    unsigned short tsn3_5Qi;
+    unsigned short tsn4_5Qi;
+    unsigned short tsn5_5Qi;
+    unsigned short tsn6_5Qi;
+    unsigned short tsn7_5Qi;
+
+    unsigned short tsn0QfiToRadioBearer;
+    unsigned short tsn1QfiToRadioBearer;
+    unsigned short tsn2QfiToRadioBearer;
+    unsigned short tsn3QfiToRadioBearer;
+    unsigned short tsn4QfiToRadioBearer;
+    unsigned short tsn5QfiToRadioBearer;
+    unsigned short tsn6QfiToRadioBearer;
+    unsigned short tsn7QfiToRadioBearer;
 
     GlobalData *globalData;
   protected:

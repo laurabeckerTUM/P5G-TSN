@@ -37,6 +37,8 @@ simsignal_t LteMacBase::receivedPacketFromUpperLayerSignal_ = registerSignal("re
 simsignal_t LteMacBase::receivedPacketFromLowerLayerSignal_ = registerSignal("receivedPacketFromLowerLayer");
 simsignal_t LteMacBase::sentPacketToUpperLayerSignal_ = registerSignal("sentPacketToUpperLayer");
 simsignal_t LteMacBase::sentPacketToLowerLayerSignal_ = registerSignal("sentPacketToLowerLayer");
+simsignal_t LteMacBase::selectedMcsSignal_ = registerSignal("selectedMcs");
+simsignal_t LteMacBase::macCGRescheduledSignal_ = registerSignal("macCGRescheduled");
 
 LteMacBase::~LteMacBase()
 {
@@ -174,6 +176,11 @@ void LteMacBase::fromPhy(cPacket *pktAux)
     else if (userInfo->getFrameType() == RACPKT) {
         EV << NOW << " Mac::fromPhy: node " << nodeId_ << " Received RAC packet" << endl;
         macHandleRac(pkt);
+    }
+    else if (userInfo->getFrameType() == SCHEDULINGREQPKT)
+    {
+        EV << NOW << "Mac::fromPhy: node " << nodeId_ << " Received SchedulingRequest packet" << endl;
+        macHandleSR(pkt);
     }
     else {
         throw cRuntimeError("Unknown packet type %d", (int)userInfo->getFrameType());

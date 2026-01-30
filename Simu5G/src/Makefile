@@ -197,6 +197,8 @@ OBJS = \
     $O/stack/mac/scheduling_modules/LteMaxCiMultiband.o \
     $O/stack/mac/scheduling_modules/LteMaxCiOptMB.o \
     $O/stack/mac/scheduling_modules/LtePf.o \
+    $O/stack/mac/scheduling_modules/MixedScheduler.o \
+    $O/stack/mac/scheduling_modules/TSNScheduler.o \
     $O/stack/packetFlowManager/PacketFlowManagerBase.o \
     $O/stack/packetFlowManager/PacketFlowManagerEnb.o \
     $O/stack/packetFlowManager/PacketFlowManagerUe.o \
@@ -292,6 +294,7 @@ OBJS = \
     $O/stack/mac/packet/LteMacSduRequest_m.o \
     $O/stack/mac/packet/LteRac_m.o \
     $O/stack/mac/packet/LteSchedulingGrant_m.o \
+    $O/stack/mac/packet/LteSchedulingRequest_m.o \
     $O/stack/pdcp_rrc/packet/LtePdcpPdu_m.o \
     $O/stack/pdcp_rrc/packet/LteRohcPdu_m.o \
     $O/stack/phy/packet/AirFrame_m.o \
@@ -346,6 +349,7 @@ MSGFILES = \
     stack/mac/packet/LteMacSduRequest.msg \
     stack/mac/packet/LteRac.msg \
     stack/mac/packet/LteSchedulingGrant.msg \
+    stack/mac/packet/LteSchedulingRequest.msg \
     stack/pdcp_rrc/packet/LtePdcpPdu.msg \
     stack/pdcp_rrc/packet/LteRohcPdu.msg \
     stack/phy/packet/AirFrame.msg \

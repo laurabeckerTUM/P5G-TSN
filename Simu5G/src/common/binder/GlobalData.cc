@@ -55,15 +55,38 @@ void GlobalData::readIpXmlConfig(){
 void GlobalData::readQosXmlConfiguration(){
     cXMLElement *root = par("qosMappingConfig");
     cXMLElementList trafficElements = root->getChildrenByTagName("TrafficType");
-        for (auto& element: trafficElements){
-            QosConfiguration qosConfiguration;
-            qosConfiguration.trafficType = element->getAttribute("name");
-            qosConfiguration.pcp = element->getAttribute("pcp");
-            qosConfiguration.fiveQi = element->getAttribute("fiveQi");
+    for (auto& element: trafficElements){
+        QosConfiguration qosConfiguration;
+        qosConfiguration.trafficType = element->getAttribute("name");
+        qosConfiguration.pcp = element->getAttribute("pcp");
+        qosConfiguration.fiveQi = element->getAttribute("fiveQi");
 
-             this->qosMappingTable[qosConfiguration.trafficType]=qosConfiguration;
+        this->qosMappingTable[qosConfiguration.trafficType]=qosConfiguration;
 
-        }
+    }
+
+    trafficElements = root->getChildrenByTagName("TSCAI");
+    for (auto& element: trafficElements){
+        TSCAIConfiguration tscaiConfiguration;
+        tscaiConfiguration.UE = element->getAttribute("UE");
+        tscaiConfiguration.nodeId = MacNodeId(std::stoi(element->getAttribute("nodeId")));
+        tscaiConfiguration.priority = std::stoi(element->getAttribute("priority"));
+        tscaiConfiguration.period = std::stoi(element->getAttribute("period"));
+        tscaiConfiguration.BAT = std::stoi(element->getAttribute("BAT"));
+        tscaiConfiguration.BS = std::stoi(element->getAttribute("BS"));
+        tscaiConfiguration.DIR = element->getAttribute("DIR");
+        this->tscaiMappingTable[tscaiConfiguration.nodeId]=tscaiConfiguration;
+    }
+    
+    trafficElements = root->getChildrenByTagName("PSFPRate");
+    for (auto& element: trafficElements){
+        PSFPRateConfiguration psfpRateConfiguration;
+        psfpRateConfiguration.UE = element->getAttribute("UE");
+        psfpRateConfiguration.nodeId = MacNodeId(std::stoi(element->getAttribute("nodeId")));
+        psfpRateConfiguration.mdbv = std::stoi(element->getAttribute("mdbv"));
+        psfpRateConfiguration.DIR = element->getAttribute("DIR");
+        this->psfpRateMappingTable[psfpRateConfiguration.nodeId]=psfpRateConfiguration;
+    }
 }
 int GlobalData::convertPcpToFiveqi(Packet *datagram){
     std::string packetName = datagram->getName();

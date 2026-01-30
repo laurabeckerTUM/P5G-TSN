@@ -23,6 +23,8 @@ Define_Module(LtePhyEnb);
 using namespace omnetpp;
 using namespace inet;
 
+simsignal_t LtePhyEnb::numAirFrameNotReceivedSignal_ = registerSignal("numAirFrameNotReceived");
+
 
 LtePhyEnb::~LtePhyEnb()
 {
@@ -115,7 +117,8 @@ bool LtePhyEnb::handleControlPkt(UserControlInfo *lteinfo, LteAirFrame *frame)
     }
     // send H-ARQ feedback up
     if (lteinfo->getFrameType() == HARQPKT
-        || lteinfo->getFrameType() == RACPKT)
+        || lteinfo->getFrameType() == RACPKT
+        || lteinfo->getFrameType() == SCHEDULINGREQPKT)
     {
         handleControlMsg(frame, lteinfo);
         return true;
@@ -215,8 +218,10 @@ void LtePhyEnb::handleAirFrame(cMessage *msg)
     }
     if (result)
         numAirFrameReceived_++;
-    else
+    else{
         numAirFrameNotReceived_++;
+        emit(numAirFrameNotReceivedSignal_, 1);
+    }
 
     EV << "Handled LteAirframe with ID " << frame->getId() << " with result "
        << (result ? "RECEIVED" : "NOT RECEIVED") << endl;

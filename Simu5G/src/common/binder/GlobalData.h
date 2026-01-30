@@ -18,6 +18,7 @@
 
 #include <omnetpp.h>
 #include <inet/common/packet/Packet.h>
+#include "common/LteCommon.h"
 using namespace omnetpp;
 
 namespace simu5g {
@@ -38,24 +39,58 @@ struct QosConfiguration{
     std::string pcp;
     std::string fiveQi;
 };
+
+struct TSCAIConfiguration{
+    std::string UE;
+    MacNodeId nodeId;
+    int priority;
+    int period;
+    int BAT;
+    int BS;
+    std::string DIR;
+};
+
+struct PSFPRateConfiguration{
+    std::string UE;
+    MacNodeId nodeId;
+    int mdbv;
+    std::string DIR;
+};
+
 class GlobalData : public cSimpleModule
 {
-  protected:
-    virtual void initialize() override;
-    virtual void handleMessage(cMessage *msg) override;
-    std::map<std::string, InterfaceTable> ueEthInterfaceMapping;
-    std::map<std::string, QosConfiguration> qosMappingTable;
+    protected:
+        virtual void initialize() override;
+        virtual void handleMessage(cMessage *msg) override;
+        std::map<std::string, InterfaceTable> ueEthInterfaceMapping;
+        std::map<std::string, QosConfiguration> qosMappingTable;
+        std::map<MacNodeId, TSCAIConfiguration> tscaiMappingTable;
+        std::map<MacNodeId, PSFPRateConfiguration> psfpRateMappingTable;
+
     public:
-   void readIpXmlConfig();
-   std::map<std::string, InterfaceTable> getUeEthInterfaceMapping(){
+
+    void readIpXmlConfig();
+
+    std::map<std::string, InterfaceTable> getUeEthInterfaceMapping(){
        return ueEthInterfaceMapping;
-   }
-   void readQosXmlConfiguration();
-   std::map<std::string, QosConfiguration> getQosMappingTable(){
-       return this->qosMappingTable;
-   }
-   int convertPcpToFiveqi(inet::Packet *datagram);
-   int convertFiveqiToPcp(inet::Packet *datagram);
+    }
+
+    void readQosXmlConfiguration();
+
+    std::map<std::string, QosConfiguration> getQosMappingTable(){
+       return this->qosMappingTable; 
+    }
+
+    std::map<MacNodeId, TSCAIConfiguration> getTscaiMappingTable(){
+       return this->tscaiMappingTable; 
+    }
+
+    std::map<MacNodeId, PSFPRateConfiguration> getPSFPRateMappingTable(){
+       return this->psfpRateMappingTable; 
+    }
+    
+    int convertPcpToFiveqi(inet::Packet *datagram);
+    int convertFiveqiToPcp(inet::Packet *datagram);
 
 };
 

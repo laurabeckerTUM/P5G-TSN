@@ -21,6 +21,7 @@
 #include "nodes/backgroundCell/BackgroundScheduler.h"
 #include "stack/phy/LtePhyUe.h"
 #include "stack/mac/LteMacEnbD2D.h"
+#include "stack/mac/amc/NRMcs.h"
 
 namespace simu5g {
 
@@ -93,6 +94,8 @@ void LteRealisticChannelModel::initialize(int stage)
         enable_extCell_los_ = par("enable_extCell_los");
 
         collectSinrStatistics_ = par("collectSinrStatistics");
+
+        tableIndex = par("tableIndex");
 
         //clear jakes fading map structure
         jakesFadingMap_.clear();
@@ -397,6 +400,17 @@ double LteRealisticChannelModel::computeAngularAttenuation(double hAngle, double
 
 std::vector<double> LteRealisticChannelModel::getSINR(LteAirFrame *frame, UserControlInfo *lteInfo)
 {
+
+    if (scenario_ == OPTIMAL)
+    {
+         double optimalSinrValue = 40.0; // in dB
+
+         std::vector<double> optimalSnrVector;
+         optimalSnrVector.resize(numBands_, optimalSinrValue);
+
+         return optimalSnrVector;
+    }
+
     // get tx power
     double recvPower = lteInfo->getTxPower(); // dBm
 
@@ -908,6 +922,17 @@ std::vector<double> LteRealisticChannelModel::getRSRP(LteAirFrame *frame, UserCo
 
 std::vector<double> LteRealisticChannelModel::getSINR_bgUe(LteAirFrame *frame, UserControlInfo *lteInfo)
 {
+
+    if (scenario_ == OPTIMAL)
+    {
+         double optimalSinrValue = 40.0; // in dB
+
+         std::vector<double> optimalSnrVector;
+         optimalSnrVector.resize(numBands_, optimalSinrValue);
+
+         return optimalSnrVector;
+    }
+
     //get tx power
     double recvPower = lteInfo->getTxPower(); // dBm
 
@@ -1295,6 +1320,17 @@ std::vector<double> LteRealisticChannelModel::getRSRP_D2D(LteAirFrame *frame, Us
 
 std::vector<double> LteRealisticChannelModel::getSINR_D2D(LteAirFrame *frame, UserControlInfo *lteInfo, MacNodeId destId, Coord destCoord, MacNodeId enbId)
 {
+
+    if (scenario_ == OPTIMAL)
+    {
+         double optimalSinrValue = 40.0; // in dB
+
+         std::vector<double> optimalSnrVector;
+         optimalSnrVector.resize(numBands_, optimalSinrValue);
+
+         return optimalSnrVector;
+    }
+
     // AttenuationVector::iterator it;
     // Get Tx power
     double recvPower = lteInfo->getD2dTxPower(); // dBm
@@ -1484,6 +1520,17 @@ std::vector<double> LteRealisticChannelModel::getSINR_D2D(LteAirFrame *frame, Us
 
 std::vector<double> LteRealisticChannelModel::getSINR_D2D(LteAirFrame *frame, UserControlInfo *lteInfo_1, MacNodeId destId, Coord destCoord, MacNodeId enbId, const std::vector<double>& rsrpVector)
 {
+
+    if (scenario_ == OPTIMAL)
+    {
+         double optimalSinrValue = 40.0; // in dB
+
+         std::vector<double> optimalSnrVector;
+         optimalSnrVector.resize(numBands_, optimalSinrValue);
+
+         return optimalSnrVector;
+    }
+
     std::vector<double> snrVector = rsrpVector;
 
     MacNodeId sourceId = lteInfo_1->getSourceId();
@@ -1846,8 +1893,21 @@ bool LteRealisticChannelModel::isError(LteAirFrame *frame, UserControlInfo *lteI
                 return false;
             else if (snr > binder_->phyPisaData.maxSnr())
                 bler = 0;
-            else
-                bler = binder_->phyPisaData.getBler(itxmode, cqi - 1, snr);
+            else{
+
+                int mcsIndex = lteInfo->getMcsIndex(); // actual MCS used to send the packet
+
+                if (mcsIndex == -1) {
+                    EV << "Keep original syntax in LteRealisiticChannelModel" << endl;
+                    bler = binder_->phyPisaData.getBler(itxmode, cqi - 1, snr); // keep old semantics
+                }
+                else {
+                    // CG --> take MCS of packet description and convert it back to cqi 
+                    NRMcsTable mcsTable = (tableIndex == 0) ? NRMcsTable(false)   // LTE (extended = false)
+                                                            : NRMcsTable(true);   // NR (extended = true)
+                    bler = binder_->phyPisaData.getBlerForMcs(itxmode, static_cast<unsigned int>(mcsIndex), snr, mcsTable);
+                }
+            }
 
             EV << "\t bler computation: [itxMode=" << itxmode << "] - [cqi-1=" << cqi - 1
                << "] - [snr=" << snr << "]" << endl;

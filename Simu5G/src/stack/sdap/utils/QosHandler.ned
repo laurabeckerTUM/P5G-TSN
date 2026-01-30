@@ -32,9 +32,6 @@ simple QosHandler like IQosHandler
         int voipQfi = default(2);
         int voip5Qi = default(2);//GBR
 
-//        int videoQfi = default(3);
-//        int video5Qi = default(7);//NGBR
-
 		int videoQfi = default(3);
         int video5Qi = default(74);//GBR
 
@@ -50,6 +47,35 @@ simple QosHandler like IQosHandler
         int voipQfiToRadioBearer = default(1);
         int dataQfiToRadioBearer = default(1);
         int networkControlQfiToRadioBearer = default(1);
+
+        // TSN
+        int tsn0_5Qi = default(10);
+        int tsn1_5Qi = default(11);
+        int tsn2_5Qi = default(12);
+        int tsn3_5Qi = default(13);
+        int tsn4_5Qi = default(14);
+        int tsn5_5Qi = default(15);
+        int tsn6_5Qi = default(16);
+        int tsn7_5Qi = default(17);
+
+
+        int tsn0Qfi = default(10);
+        int tsn1Qfi = default(11);
+        int tsn2Qfi = default(12);
+        int tsn3Qfi = default(13);
+        int tsn4Qfi = default(14);
+        int tsn5Qfi = default(15);
+        int tsn6Qfi = default(16);
+        int tsn7Qfi = default(17);
+
+        int tsn0QfiToRadioBearer = default(10);
+        int tsn1QfiToRadioBearer = default(11);
+        int tsn2QfiToRadioBearer = default(12);
+        int tsn3QfiToRadioBearer = default(13);
+        int tsn4QfiToRadioBearer = default(14);
+        int tsn5QfiToRadioBearer = default(15);
+        int tsn6QfiToRadioBearer = default(16);
+        int tsn7QfiToRadioBearer = default(17);
         @display("i=block/classifier");
 }
 

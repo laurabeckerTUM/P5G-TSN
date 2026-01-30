@@ -12,6 +12,7 @@
 #include "stack/mac/scheduler/LteScheduler.h"
 #include "stack/mac/scheduler/LteSchedulerEnb.h"
 #include "stack/mac/scheduler/LteSchedulerEnbUl.h"
+#include "stack/mac/allocator/LteAllocationModule.h"
 
 namespace simu5g {
 
@@ -59,7 +60,7 @@ unsigned int LteScheduler::decreaseSchedulerPeriodCounter()
     return ret;
 }
 
-unsigned int LteScheduler::requestGrant(MacCid cid, unsigned int bytes, bool& terminate, bool& active, bool& eligible, BandLimitVector *bandLim)
+unsigned int LteScheduler::requestGrant(MacCid cid, unsigned int bytes, bool& terminate, bool& active, bool& eligible, bool static_grant, int minMcsIndex, int staticMcsIndex, BandLimitVector *bandLim)
 {
     if (bandLim == nullptr) {
         // reset the band limit vector used for requesting grants
@@ -70,8 +71,14 @@ unsigned int LteScheduler::requestGrant(MacCid cid, unsigned int bytes, bool& te
         }
         bandLim = &slotReqGrantBandLimit_;
     }
+    if (static_grant)
+        return eNbScheduler_->scheduleStaticGrant(cid, bytes, terminate, active, eligible, carrierFrequency_, minMcsIndex, staticMcsIndex, bandLim);
+    else
+        return eNbScheduler_->scheduleGrant(cid, bytes, terminate, active, eligible, carrierFrequency_, bandLim);
+}
 
-    return eNbScheduler_->scheduleGrant(cid, bytes, terminate, active, eligible, carrierFrequency_, bandLim);
+void LteScheduler::applyCGs(int hpCycle, int slotOffset){
+    eNbScheduler_->allocator_->applyStaticGrants(hpCycle, slotOffset);
 }
 
 unsigned int LteScheduler::requestGrantBackground(MacCid bgCid, unsigned int bytes, bool& terminate, bool& active, bool& eligible, BandLimitVector *bandLim)
@@ -148,16 +155,20 @@ bool LteScheduler::scheduleRacRequests()
     return eNbScheduler_->racschedule(carrierFrequency_, &slotRacBandLimit_);
 }
 
-void LteScheduler::schedule()
+void LteScheduler::schedule(bool static_scheduling)
 {
-    activeConnectionSet_ = eNbScheduler_->readActiveConnections();
+    if (static_scheduling)
+        prepareSchedule(static_scheduling);
+    else{
+        activeConnectionSet_ = eNbScheduler_->readActiveConnections();
 
-    // obtain the list of cids that can be scheduled on this carrier
-    buildCarrierActiveConnectionSet();
+        // obtain the list of cids that can be scheduled on this carrier
+        buildCarrierActiveConnectionSet();
 
-    // scheduling
-    prepareSchedule();
-    commitSchedule();
+        // scheduling
+        prepareSchedule(static_scheduling);
+        commitSchedule();
+    }
 }
 
 void LteScheduler::buildCarrierActiveConnectionSet()

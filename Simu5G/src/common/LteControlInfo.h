@@ -13,6 +13,7 @@
 #define _LTE_LTECONTROLINFO_H_
 
 #include "common/LteControlInfo_m.h"
+#include "stack/mac/amc/NRMcs.h"
 #include <vector>
 
 namespace simu5g {
@@ -37,6 +38,7 @@ class UserControlInfo : public UserControlInfo_Base
     //Move senderMovement;
     /** @brief The playground position of the sending host.*/
     inet::Coord senderCoord;
+    unsigned int mcsIndex = -1;
 
   public:
 
@@ -99,6 +101,15 @@ class UserControlInfo : public UserControlInfo_Base
     void setGrantedBlocks(const RbMap& rbMap)
     {
         grantedBlocks = rbMap;
+    }
+
+    void setMcsIndex(unsigned int mcs)
+    {
+        mcsIndex = mcs;
+    }
+
+    unsigned int getMcsIndex() const {
+        return mcsIndex;
     }
 
     // struct used to request a feedback computation by nodeB

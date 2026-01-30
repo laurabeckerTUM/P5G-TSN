@@ -96,7 +96,8 @@ void NRPdcpRrcEnb::fromDataPort(cPacket *pktAux)
 
         unsigned int key = idToMacCid(lteInfo->getDestId(), mylcid);
         if (qosHandler->getQosInfo().find(key) == qosHandler->getQosInfo().end()){
-            QosInfo qosinfo(DL);
+			EV << "Store QoSInfo in QoSHandler DL" << endl;
+            QosInfo qosinfo((Direction)lteInfo->getDirection());								   
             qosinfo.destNodeId = lteInfo->getDestId();
             qosinfo.destAddress = Ipv4Address(lteInfo->getDstAddr());
             qosinfo.appType = (ApplicationType) lteInfo->getApplication();
@@ -108,10 +109,12 @@ void NRPdcpRrcEnb::fromDataPort(cPacket *pktAux)
             qosinfo.lcid = mylcid;
             qosinfo.cid = key;
             qosinfo.trafficClass = (LteTrafficClass) lteInfo->getTraffic();
-            qosHandler->insertQosInfo(key, qosinfo);
+            qosHandler->insertQosInfo(key, qosinfo);	 
+        }
+        else{
+            EV << "QoSInfo not found" << endl;
         }
     }
-
     // assign LCID
     lteInfo->setLcid(mylcid);
 
@@ -148,8 +151,25 @@ void NRPdcpRrcEnb::fromLowerLayer(cPacket *pktAux)
     EV << "LtePdcp : Received packet with CID " << lteInfo->getLcid() << "\n";
     EV << "LtePdcp : Packet size " << pkt->getByteLength() << " Bytes\n";
 
-    MacCid cid = idToMacCid(lteInfo->getSourceId(), lteInfo->getLcid());   // TODO: check if you have to get master node id
+    MacCid cid = idToMacCid(lteInfo->getSourceId(), 0);   // bufferizeBsr assumes always lcid 0 --> this is the cid reported to the schedulers
 
+    if (qosHandler->getQosInfo().find(cid) == qosHandler->getQosInfo().end()){
+        EV << "Store QoSInfo in QoSHandler UL, cid " << cid << " lcid " << lteInfo->getLcid()<< " src id " << lteInfo->getSourceId() << endl;
+        QosInfo qosinfo((Direction)lteInfo->getDirection());
+        qosinfo.destNodeId = lteInfo->getDestId();
+        qosinfo.destAddress = Ipv4Address(lteInfo->getDstAddr());
+        qosinfo.appType = (ApplicationType) lteInfo->getApplication();
+        qosinfo.qfi = lteInfo->getQfi();
+        qosinfo.rlcType = lteInfo->getRlcType();
+        qosinfo.radioBearerId = lteInfo->getRadioBearerId();
+        qosinfo.senderAddress = Ipv4Address(lteInfo->getSrcAddr());
+        qosinfo.senderNodeId =  lteInfo->getSourceId();
+        qosinfo.lcid = 0;
+        qosinfo.cid = cid;
+        qosinfo.trafficClass = (LteTrafficClass) lteInfo->getTraffic();
+        qosHandler->insertQosInfo(cid, qosinfo);
+
+    }
     LteRxPdcpEntity *entity = getRxEntity(cid);
     entity->handlePacketFromLowerLayer(pkt);
 }

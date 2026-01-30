@@ -22,6 +22,8 @@ using namespace omnetpp;
 using namespace inet;
 
 
+simsignal_t LtePhyEnbD2D::numAirFrameNotReceivedSignal_ = registerSignal("numAirFrameNotReceived");
+
 void LtePhyEnbD2D::initialize(int stage)
 {
     LtePhyEnb::initialize(stage);

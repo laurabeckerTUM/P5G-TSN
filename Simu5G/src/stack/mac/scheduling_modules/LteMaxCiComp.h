@@ -31,7 +31,7 @@ class LteMaxCiComp : public virtual LteScheduler
   public:
     LteMaxCiComp(Binder *binder) : LteScheduler(binder) {}
 
-    void prepareSchedule() override;
+    void prepareSchedule(bool static_scheduling = false) override;
 
     void commitSchedule() override;
 

@@ -24,6 +24,7 @@ struct NRMCSelem
 {
     LteMod mod_;       /// modulation (Qm)
     double coderate_;  /// code rate (R)
+    unsigned int index_;
 
     NRMCSelem(LteMod mod = _QPSK, double coderate = 0.0) : mod_(mod), coderate_(coderate)
     {
@@ -64,6 +65,12 @@ class NRMcsTable
     {
         return table[tbs];
     }
+
+    /** return a CQI in [1..15] that corresponds to the given mcsIndex.
+     * If nothing matches, returns 15 (most aggressive) as fallback.
+     */
+    int getCqiForMcsIndex(int mcsIndex) const;
+
 
 };
 

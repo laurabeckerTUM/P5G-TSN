@@ -119,7 +119,65 @@ void LtePdcpRrcBase::setTrafficInformation(cPacket *pkt, inet::Ptr<FlowControlIn
 {
     ASSERT(qosHandler != nullptr);
     std::string pktName = pkt->getName();
-    if ((strcmp(pkt->getName(), "VoIP")) == 0 || (pktName.find("audio") == 0)) {
+        // TSN extensions
+    if ((pktName.find("tsn0") == 0)) {
+        lteInfo->setApplication(TSN0);
+        lteInfo->setTraffic(TSN0_TC);
+        lteInfo->setRlcType(aToRlcType(par("interactiveRlc")));
+        lteInfo->setQfi(qosHandler->getQfi(TSN0));
+        lteInfo->setRadioBearerId(qosHandler->getRadioBearerId(TSN0));
+    }
+    else if ((pktName.find("tsn1") == 0)) {
+        lteInfo->setApplication(TSN1);
+        lteInfo->setTraffic(TSN1_TC);
+        lteInfo->setRlcType(aToRlcType(par("interactiveRlc")));
+        lteInfo->setQfi(qosHandler->getQfi(TSN1));
+        lteInfo->setRadioBearerId(qosHandler->getRadioBearerId(TSN1));
+    }
+    else if ((pktName.find("tsn2") == 0)) {
+        lteInfo->setApplication(TSN2);
+        lteInfo->setTraffic(TSN2_TC);
+        lteInfo->setRlcType(aToRlcType(par("interactiveRlc")));
+        lteInfo->setQfi(qosHandler->getQfi(TSN2));
+        lteInfo->setRadioBearerId(qosHandler->getRadioBearerId(TSN2));
+    }
+    else if ((pktName.find("tsn3") == 0)) {
+        lteInfo->setApplication(TSN3);
+        lteInfo->setTraffic(TSN3_TC);
+        lteInfo->setRlcType(aToRlcType(par("interactiveRlc")));
+        lteInfo->setQfi(qosHandler->getQfi(TSN3));
+        lteInfo->setRadioBearerId(qosHandler->getRadioBearerId(TSN3));
+    }
+    else if ((pktName.find("tsn4") == 0)) {
+        lteInfo->setApplication(TSN4);
+        lteInfo->setTraffic(TSN4_TC);
+        lteInfo->setRlcType(aToRlcType(par("interactiveRlc")));
+        lteInfo->setQfi(qosHandler->getQfi(TSN4));
+        lteInfo->setRadioBearerId(qosHandler->getRadioBearerId(TSN4));
+    }
+    else if ((pktName.find("tsn5") == 0)) {
+        lteInfo->setApplication(TSN5);
+        lteInfo->setTraffic(TSN5_TC);
+        lteInfo->setRlcType(aToRlcType(par("interactiveRlc")));
+        lteInfo->setQfi(qosHandler->getQfi(TSN5));
+        lteInfo->setRadioBearerId(qosHandler->getRadioBearerId(TSN5));
+    }
+    else if ((pktName.find("tsn6") == 0)) {
+        lteInfo->setApplication(TSN6);
+        lteInfo->setTraffic(TSN6_TC);
+        lteInfo->setRlcType(aToRlcType(par("interactiveRlc")));
+        lteInfo->setQfi(qosHandler->getQfi(TSN6));
+        lteInfo->setRadioBearerId(qosHandler->getRadioBearerId(TSN6));
+    }
+    else if ((pktName.find("tsn7") == 0)) {
+        lteInfo->setApplication(TSN7);
+        lteInfo->setTraffic(TSN7_TC);
+        lteInfo->setRlcType(aToRlcType(par("interactiveRlc")));
+        lteInfo->setQfi(qosHandler->getQfi(TSN7));
+        lteInfo->setRadioBearerId(qosHandler->getRadioBearerId(TSN7));
+    }
+
+    else if ((strcmp(pkt->getName(), "VoIP")) == 0 || (pktName.find("audio") == 0)) {
         lteInfo->setApplication(VOIP);
         lteInfo->setTraffic(CONVERSATIONAL);
         lteInfo->setRlcType(aToRlcType(par("conversationalRlc")));
