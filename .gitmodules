@@ -1,3 +1,6 @@
 [submodule "5GTQ"]
 	path = 5GTQ
 	url = https://github.com/inet-framework/5GTQ
+[submodule "inet4.5"]
+	path = inet4.5
+	url = https://github.com/inet-framework/inet
