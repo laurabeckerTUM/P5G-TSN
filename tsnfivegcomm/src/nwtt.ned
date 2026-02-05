@@ -31,8 +31,9 @@ import inet.networklayer.common.InterfaceTable;
 import inet.node.contract.IEthernetNetworkNode;
 import inet.networklayer.common.InterfaceTable;
 import tsnfivegcomm.TsnRelayUnit;
+import inet.node.tsn.TsnDevice;
 
-module Nwtt extends NetworkLayerNodeBase
+module Nwtt extends  TsnDevice 
 {
     parameters:
         @display("bgb=1348.9225,1103.51;i=abstract/switch");
@@ -46,44 +47,12 @@ module Nwtt extends NetworkLayerNodeBase
         forwarding = default(true);
         multicastForwarding = default(false);
 
-        **.macTableModule = default(absPath(".macTable"));
+       // **.macTableModule = default(absPath(".macTable"));
         **.interfaceTableModule = default(absPath(".interfaceTable"));
         bool tsnDlEnabled = default(true);
 
     gates:
         // this gate is used for the UPF connected to the external data network
         // it must be left unconnected for intermediate UPFs 
-        inout filterGate @loose @labels(PppFrame-conn);
-
-    submodules:
-
-        tn: MessageDispatcher {
-            parameters:
-                @display("p=750,296;b=1000,5,,,,1");
-        }
-        macTable: <default("MacForwardingTable")> like IMacForwardingTable {
-            @display("p=-172.692,-81.918;is=s");
-        }
-
-    connections:
-
-        // at dispatcher to transport layer connections
-        // transport layer to tn dispatcher connections
-
-
-        // tn dispatcher to network layer connections
-        tn.out++ --> ipv4.transportIn if hasIpv4;
-        tn.in++ <-- ipv4.transportOut if hasIpv4;
-
-        tn.out++ --> ipv6.transportIn if hasIpv6;
-        tn.in++ <-- ipv6.transportOut if hasIpv6;
-
-        tn.out++ --> generic.transportIn if hasGn;
-        tn.in++ <-- generic.transportOut if hasGn;
-
-        tn.out++ --> nl.in++;
-        tn.in++ <-- nl.out++;
-
-}
-
-
+        inout filterGate @loose @labels(PppFrame-conn);						
+}						
