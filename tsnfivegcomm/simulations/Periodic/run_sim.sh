@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # --- Environment setup ---
-OMNETPP_ROOT=/home/laura/omnetpp-6.1
+OMNETPP_ROOT=<path_to_omnetpp-6.1>
 TSN5G_ROOT=$OMNETPP_ROOT/P5G-TSN/tsnfivegcomm
 TSN5G_SRC=$TSN5G_ROOT/src
 SIMU5G_ROOT=$OMNETPP_ROOT/P5G-TSN/Simu5G
