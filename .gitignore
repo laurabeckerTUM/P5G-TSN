@@ -1,0 +1,16 @@
+/.metadata/
+inet4.5/
+inet/
+*/*_m.cc
+*/*_m.h
+
+# Build output
+Simu5G/out/
+
+# Generated message files
+**/*_m.cc
+**/*_m.h
+
+Simu5G/src/common/features.h
+Simu5G/src/libsimu5g_dbg.so
+

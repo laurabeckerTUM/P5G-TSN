@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+<TrafficType name='tsn7_networkControl' pcp='7' fiveQi='17'/>
+<TrafficType name='tsn6_isochronous' pcp='6' fiveQi='16'/>
+<TrafficType name='tsn5_cyclic' pcp='5' fiveQi='15'/>
+<TrafficType name='tsn4_controlEvents' pcp='4' fiveQi='14'/>
+<TrafficType name='tsn3_alarm' pcp='3' fiveQi='13'/>
+<TrafficType name='tsn2_configuration' pcp='2' fiveQi='12'/>
+<TrafficType name='tsn1_audio' pcp='1' fiveQi='11'/>
+<TrafficType name='tsn0_bestEffort' pcp='0' fiveQi='10'/>
+<TSCAI UE='dsttUe8' nodeId='2057' priority='6' period='5000us' BAT='139000us' BS='128' DIR='UL'/>
+<TSCAI UE='dsttUe9' nodeId='2058' priority='6' period='5000us' BAT='139000us' BS='128' DIR='UL'/>
+<TSCAI UE='dsttUe10' nodeId='2059' priority='6' period='5000us' BAT='139000us' BS='128' DIR='UL'/>
+<TSCAI UE='dsttUe11' nodeId='2060' priority='6' period='5000us' BAT='139000us' BS='128' DIR='UL'/>
+<TSCAI UE='dsttUe12' nodeId='2061' priority='6' period='5000us' BAT='139000us' BS='128' DIR='UL'/>
+<TSCAI UE='dsttUe13' nodeId='2062' priority='6' period='5000us' BAT='139000us' BS='128' DIR='UL'/>
+<TSCAI UE='dsttUe14' nodeId='2063' priority='6' period='5000us' BAT='139000us' BS='128' DIR='UL'/>
+<TSCAI UE='dsttUe15' nodeId='2064' priority='6' period='5000us' BAT='139000us' BS='128' DIR='UL'/>
+<TSCAI UE='dsttUe16' nodeId='2065' priority='5' period='8000us' BAT='138500us' BS='228' DIR='UL'/>
+<TSCAI UE='dsttUe17' nodeId='2066' priority='5' period='8000us' BAT='138500us' BS='228' DIR='UL'/>
+<TSCAI UE='dsttUe18' nodeId='2067' priority='5' period='8000us' BAT='138500us' BS='228' DIR='UL'/>
+<TSCAI UE='dsttUe19' nodeId='2068' priority='5' period='8000us' BAT='138500us' BS='228' DIR='UL'/>
+<TSCAI UE='dsttUe20' nodeId='2069' priority='5' period='8000us' BAT='138500us' BS='228' DIR='UL'/>
+<TSCAI UE='dsttUe21' nodeId='2070' priority='5' period='8000us' BAT='138500us' BS='228' DIR='UL'/>
+<TSCAI UE='dsttUe22' nodeId='2071' priority='5' period='8000us' BAT='138500us' BS='228' DIR='UL'/>
+<TSCAI UE='dsttUe23' nodeId='2072' priority='5' period='8000us' BAT='138500us' BS='228' DIR='UL'/>
+</config>
+
+

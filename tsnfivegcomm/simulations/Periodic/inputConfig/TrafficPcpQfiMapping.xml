@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+<TrafficType name='tsn7_networkControl' pcp='7' fiveQi='17'/>
+<TrafficType name='tsn6_isochronous' pcp='6' fiveQi='16'/>
+<TrafficType name='tsn5_cyclic' pcp='5' fiveQi='15'/>
+<TrafficType name='tsn4_controlEvents' pcp='4' fiveQi='14'/>
+<TrafficType name='tsn3_alarm' pcp='3' fiveQi='13'/>
+<TrafficType name='tsn2_configuration' pcp='2' fiveQi='12'/>
+<TrafficType name='tsn1_audio' pcp='1' fiveQi='11'/>
+<TrafficType name='tsn0_bestEffort' pcp='0' fiveQi='10'/>
+</config>

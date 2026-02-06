@@ -1,13 +1,15 @@
-# Readme
+# P5G-TSN Simulation Framework
+This repository contains P5G-TSN, an OMNeT++-based simulation framework for modeling private 5G networks integrated with Time-Sensitive Networking (TSN). The framework is designed to evaluate end-to-end scheduling and resource allocation mechanisms across 5G and TSN domains. P5G-TSN was originally introduced in [1] and extends the 5GTQ framework [2], which itself is based on INET [3] and Simu5G [4].
 
-## P5G-TSN: A Private 5G TSN Simulation Framework
-The OMNeT++ P5G-TSN framework simulates 5G networks integrated with TSN to analyze end-to-end scheduling algorithms considering the characteristics of a private 5G network. This framework extends 5GTQ [1] focussing on the implementation of configurable TDD patterns and the resource allocation procedure w.r.t. to these TDD patterns. 
+## Repository Versions and Paper Mapping
+This repository contains multiple tagged versions corresponding to different publications:
+- P5G-TSN_WueWoWas includes the framework itslef, which was presented in [1]
+- Joint_Scheduler_NOMS (current tag) extends P5G-TSN with a joint resource allocation and scheduling mechanism to support the simulation scenarios presented in [5]
 
-[1] 5GTQ: QoS-Aware 5G-TSN Simulation Framework. IEEE 98th Vehicular Technology Conference: VTC2023-Fall. Hong Kong. 2023. p. 7.
+To reproduce the results of a specific paper, check out the corresponding tag and follow the README included with that version.
 
 
-To cite the P5G-TSN framework, please use the following BibTex code: 
-
+To cite the framework P5G-TSN itself, please use the following BibTex code: 
 ````bibtex
 @inproceedings{p5g-tsn,
 	title        = {{P5G-TSN: A Private 5G TSN Simulation Framework}},
@@ -18,25 +20,43 @@ To cite the P5G-TSN framework, please use the following BibTex code:
 }
 ````
 
+To cite the joint scheduler explicitly, please cite the following:
+````bibtex
+@misc{becker2025JointResourceAllocation,
+      title={Joint Resource Allocation to Transparently Integrate 5G TDD Uplink with Time-Aware TSN}, 
+      author={Laura Becker and Yash Deshpande and Wolfgang Kellerer},
+      year={2025},
+      eprint={2511.23373},
+      archivePrefix={arXiv},
+      primaryClass={cs.NI},
+      url={https://arxiv.org/abs/2511.23373}, 
+}
+````
+
+
 ## Installation of P5G-TSN
-The framework is devoloped and tested only on Linux and MAC OS with the OMNeT++ version 6.0.3. 
+P5G-TSN is devoloped and tested with the OMNeT++ version 6.1 which can be downloaded from https://omnetpp.org/download/old.html. 
 
-### 1. Installation of 5GTQ
-To ensure a clean build process, the 5GTQ framework is used as a base for P5G-TSN. For the installation follow the Readme of 5GTQ (https://github.com/inet-framework/5GTQ). 5GTQ depends on the frameworks Simu5G and INET. To avoid building conflicts the given versions in the 5GTQ frameworks should be used. 
-
-After successful installation, your workspace directory should contain the following structure:
+Clone the repository:
 ````
-samples/ 
-├── 📂 inet/ 
-├── 📂 Simu5G/ 
-├── 📂 tsnfivegcomm/
+git clone --recurse-submodules git@github.com:laurabeckerTUM/P5G-TSN.git
 ````
+Afterwards, the project can be imported to the OMNeT++ IDE work space and build. 
 
-### 2. Integrating P5G-TSN
-- The P5G-TSN implementation modifies only the Simu5G part of the framework.
-- Replace the necessary files in the respective Simu5G directories.
-- Rebuild the project.
+The simulation scenarios used in [2] are located in: "tsnfivegcomm/simulations/". 
 
-### 3. Running an Example Simulation
-- Copy the examples of this repository into the workspace
-- To prevent path conflicts, store the examples in the directory tsnfivegcomm.simulations.p5g_tsn
+Each scenario includes:
+- run_sim.sh (executes all simulation configurations)
+- export_results.sh (extracts and processes simulation results)
+
+Run these scripts to reproduce the figures and results presented in the paper.
+
+[1] L. Becker and W. Kellerer, “P5G-TSN: A Private 5G TSN Simulation Framework,” KuVS Fachgespräch - Würzburg Workshop on Modeling, Analysis and Simulation of Next-Generation Communication Networks (WueWoWAS), TUM School of Computation, Information and Technology, 2024.
+
+[2] R. Debnath, M. S. Akinci, D. Ajith and S. Steinhorst, "5GTQ: QoS-Aware 5G-TSN Simulation Framework," 2023 IEEE 98th Vehicular Technology Conference (VTC2023-Fall), Hong Kong, Hong Kong, 2023, pp. 1-7, doi: 10.1109/VTC2023-Fall60731.2023.10333533. 
+
+[3] “INET Framework,” https://inet.omnetpp.org/, accessed: 2025-10-23.
+
+[4] G. Nardini, D. Sabella, G. Stea, P. Thakkar and A. Virdis, "Simu5G–An OMNeT++ Library for End-to-End Performance Evaluation of 5G Networks," in IEEE Access, vol. 8, pp. 181176-181191, 2020, doi: 10.1109/ACCESS.2020.3028550.
+
+[5] L. Becker, Y. Deshpande, and W. Kellerer, “Joint Resource Allocation to Transparently Integrate 5G TDD Uplink with Time-Aware TSN,” arXiv preprint arXiv:2511.23373, 2025. [Online]. Available: https://arxiv.org/abs/2511.23373
