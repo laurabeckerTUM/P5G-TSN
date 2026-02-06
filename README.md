@@ -52,7 +52,11 @@ Each scenario includes:
 Run these scripts to reproduce the figures and results presented in the paper.
 
 [1] L. Becker and W. Kellerer, “P5G-TSN: A Private 5G TSN Simulation Framework,” KuVS Fachgespräch - Würzburg Workshop on Modeling, Analysis and Simulation of Next-Generation Communication Networks (WueWoWAS), TUM School of Computation, Information and Technology, 2024.
+
 [2] R. Debnath, M. S. Akinci, D. Ajith and S. Steinhorst, "5GTQ: QoS-Aware 5G-TSN Simulation Framework," 2023 IEEE 98th Vehicular Technology Conference (VTC2023-Fall), Hong Kong, Hong Kong, 2023, pp. 1-7, doi: 10.1109/VTC2023-Fall60731.2023.10333533. 
+
 [3] “INET Framework,” https://inet.omnetpp.org/, accessed: 2025-10-23.
+
 [4] G. Nardini, D. Sabella, G. Stea, P. Thakkar and A. Virdis, "Simu5G–An OMNeT++ Library for End-to-End Performance Evaluation of 5G Networks," in IEEE Access, vol. 8, pp. 181176-181191, 2020, doi: 10.1109/ACCESS.2020.3028550.
+
 [5] L. Becker, Y. Deshpande, and W. Kellerer, “Joint Resource Allocation to Transparently Integrate 5G TDD Uplink with Time-Aware TSN,” arXiv preprint arXiv:2511.23373, 2025. [Online]. Available: https://arxiv.org/abs/2511.23373
