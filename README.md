@@ -41,6 +41,43 @@ Clone the repository:
 ````
 git clone --recurse-submodules git@github.com:laurabeckerTUM/P5G-TSN.git
 ````
+
+Include changes from 5gtq by replacing function extendConfiguration in inet4.5/src/inet/linklayer/configurator/MacForwardingTableConfigurator.cc by:
+````
+void MacForwardingTableConfigurator::extendConfiguration(Node *destinationNode, Interface *destinationInterface, MacAddress macAddress)
+{
+    for (int j = 0; j < destinationNode->getNumInLinks(); j++) {
+        auto link = (Link *)destinationNode->getLinkIn(j);
+        link->setWeight(link->destinationInterface != destinationInterface ? std::numeric_limits<double>::infinity() : 1);
+    }
+    topology->calculateWeightedSingleShortestPathsTo(destinationNode);
+    for (int j = 0; j < topology->getNumNodes(); j++) {
+        Node *sourceNode = (Node *)topology->getNode(j);
+        auto cellularDeviceName = destinationNode->module->getDisplayName(); 
+        if (!destinationInterface){ 
+            break;
+        }
+        if (sourceNode != destinationNode && isBridgeNode(sourceNode) && sourceNode->getNumPaths() != 0) {
+            auto firstLink = (Link *)sourceNode->getPath(0);
+            auto firstInterface = static_cast<Interface *>(firstLink->sourceInterface);
+            auto interfaceName = firstInterface->networkInterface->getInterfaceName();
+            auto moduleId = sourceNode->module->getSubmodule("macTable")->getId();
+            auto it = configurations.find(moduleId);
+            if (it == configurations.end())
+                configurations[moduleId] = new cValueArray();
+            else if (findForwardingRule(it->second, macAddress, interfaceName) != nullptr)
+                continue;
+            else {
+                auto rule = new cValueMap();
+                rule->set("address", macAddress.str());
+                rule->set("interface", interfaceName);
+                it->second->add(rule);
+            }
+        }
+    }
+}
+````
+
 Afterwards, the project can be imported to the OMNeT++ IDE work space and build. 
 
 The simulation scenarios used in [2] are located in: "tsnfivegcomm/simulations/". 
