@@ -141,14 +141,14 @@ void NRMacUe::handleSelfMessageFdd()
         if (getNumerologyPeriodCounter(binder_->getNumerologyIndexFromCarrierFreq(mit.first)) > 0)
             continue;
 
-        std::list<Packet *> pduList;
-        for (auto [macNodeId, rxBuf] : mit.second) {
-            pduList = rxBuf->extractCorrectPdus();
+        for (auto& hit : mit.second) {
+            auto pduList = hit.second->extractCorrectPdus();
             while (!pduList.empty()) {
                 auto pdu = pduList.front();
                 pduList.pop_front();
                 macPduUnmake(pdu);
             }
+            hit.second->flushFeedback();
         }
     }
 
@@ -305,14 +305,15 @@ void NRMacUe::handleSelfMessageTdd()
         if (getNumerologyPeriodCounter(binder_->getNumerologyIndexFromCarrierFreq(mit.first)) > 0)
             continue;
 
-        std::list<Packet *> pduList;
-        for (auto [macNodeId, rxBuf] : mit.second) {
-            pduList = rxBuf->extractCorrectPdus();
+        for (auto& hit : mit.second) {
+            auto pduList = hit.second->extractCorrectPdus();
             while (!pduList.empty()) {
                 auto pdu = pduList.front();
                 pduList.pop_front();
                 macPduUnmake(pdu);
             }
+            if (cur_slot_type != DL_SLOT)
+                hit.second->flushFeedback();
         }
     }
 
