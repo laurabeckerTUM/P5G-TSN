@@ -1,0 +1,54 @@
+diff --git a/src/inet/linklayer/configurator/MacForwardingTableConfigurator.cc b/src/inet/linklayer/configurator/MacForwardingTableConfigurator.cc
+index 9df54fe96f..44c8827c2a 100644
+--- a/src/inet/linklayer/configurator/MacForwardingTableConfigurator.cc
++++ b/src/inet/linklayer/configurator/MacForwardingTableConfigurator.cc
+@@ -67,36 +67,35 @@ void MacForwardingTableConfigurator::computeMacForwardingTables()
+ 
+ void MacForwardingTableConfigurator::extendConfiguration(Node *destinationNode, Interface *destinationInterface, MacAddress macAddress)
+ {
+-    for (int i = 0; i < destinationNode->getNumInLinks(); i++) {
+-        auto link = (Link *)destinationNode->getLinkIn(i);
++    for (int j = 0; j < destinationNode->getNumInLinks(); j++) {
++        auto link = (Link *)destinationNode->getLinkIn(j);
+         link->setWeight(link->destinationInterface != destinationInterface ? std::numeric_limits<double>::infinity() : 1);
+     }
+     topology->calculateWeightedSingleShortestPathsTo(destinationNode);
+-    for (int i = 0; i < topology->getNumNodes(); i++) {
+-        Node *sourceNode = (Node *)topology->getNode(i);
++    for (int j = 0; j < topology->getNumNodes(); j++) {
++        Node *sourceNode = (Node *)topology->getNode(j);
++        auto cellularDeviceName = destinationNode->module->getDisplayName(); 
++        if (!destinationInterface){ 
++            break;
++        }
+         if (sourceNode != destinationNode && isBridgeNode(sourceNode) && sourceNode->getNumPaths() != 0) {
+             auto firstLink = (Link *)sourceNode->getPath(0);
+             auto firstInterface = static_cast<Interface *>(firstLink->sourceInterface);
+             auto interfaceName = firstInterface->networkInterface->getInterfaceName();
+             auto moduleId = sourceNode->module->getSubmodule("macTable")->getId();
+             auto it = configurations.find(moduleId);
+-            cValueArray *rules = nullptr;
+             if (it == configurations.end())
+-                rules = configurations[moduleId] = new cValueArray();
+-            else
+-                rules = it->second;
+-            if (findForwardingRule(rules, macAddress, interfaceName) == nullptr) {
++                configurations[moduleId] = new cValueArray();
++            else if (findForwardingRule(it->second, macAddress, interfaceName) != nullptr)
++                continue;
++            else {
+                 auto rule = new cValueMap();
+                 rule->set("address", macAddress.str());
+                 rule->set("interface", interfaceName);
+-                rules->add(rule);
++                it->second->add(rule);
+             }
+         }
+     }
+-    for (int i = 0; i < destinationNode->getNumInLinks(); i++) {
+-        auto link = (Link *)destinationNode->getLinkIn(i);
+-        link->setWeight(1);
+-    }
+ }
+ 
+ cValueMap *MacForwardingTableConfigurator::findForwardingRule(cValueArray *configuration, MacAddress macAddress, std::string interfaceName)
