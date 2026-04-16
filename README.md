@@ -4,7 +4,7 @@ This repository contains P5G-TSN, an OMNeT++-based simulation framework for mode
 ## Repository Versions and Paper Mapping
 This repository contains multiple tagged versions corresponding to different publications:
 - P5G-TSN_WueWoWas includes the framework itslef, which was presented in [1]
-- Joint_Scheduler_NOMS (current tag) extends P5G-TSN with a joint resource allocation and scheduling mechanism to support the simulation scenarios presented in [5]
+- Joint_Scheduler_NOMS_Artifact (current tag) extends P5G-TSN with a joint resource allocation and scheduling mechanism to support the simulation scenarios presented in [5]
 
 To reproduce the results of a specific paper, check out the corresponding Readme to get further instructions.
 
@@ -28,3 +28,14 @@ To cite the joint scheduler explicitly, please cite the following:
 }
 ````
 
+##  References
+
+[1] L. Becker and W. Kellerer, “P5G-TSN: A Private 5G TSN Simulation Framework,” WueWoWAS, 2024  
+
+[2] INET Framework — https://inet.omnetpp.org/  
+
+[3] G. Nardini et al., “Simu5G–An OMNeT++ Library for End-to-End Performance Evaluation of 5G Networks,” IEEE Access, 2020  
+
+[4] R. Debnath et al., “5GTQ: QoS-Aware 5G-TSN Simulation Framework,” IEEE VTC 2023  
+
+[5] L. Becker, Y. Deshpande, and W. Kellerer, “Joint Resource Allocation to Transparently Integrate 5G TDD Uplink with Time-Aware TSN,” 2025. 
