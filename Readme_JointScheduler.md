@@ -76,8 +76,7 @@ In Chapter IV of [1], a heterogeneous RAN scheduler is presented combining:
 In [1], a grant-free (GF) scheduler is proposed pre-allocating resources based on the TSN schedules serving streams with different latency and jitter requirements.
 The pre-allocation scheme is defined in Algorithm 1 and 2 of [1], calculating for each slot the resources to be reserved. This functionality is implemented in:
 
-- `Simu5G/src/stack/mac/scheduling_modules/TSNScheduler.cc`
-- `Simu5G/src/stack/mac/scheduling_modules/TSNScheduler.h`
+- `Simu5G/src/stack/mac/scheduling_modules/TSNScheduler.*`
 
 As described in Chapter IV of [1], the scheduler supports two configurations:
 
@@ -111,10 +110,8 @@ GF scheduling based on a static MCS is used as a baseline in [1], implementing t
 
 Due to the modified MCS selection, adjustments are required for the retransmission probability calculation. Since Simu5G uses CQI-based BLER curves, this work explicitly transmits the selected MCS and maps it back to a CQI value at the receiver to reuse the existing configured BLER curves. This functionality is implemented in:
 
-- `Simu5G/src/common/PhyPisaData.cc`
-- `Simu5G/src/common/PhyPisaData.h`
-- `Simu5G/src/stack/phy/amc/NRMcs.cc`
-- `Simu5G/src/stack/phy/amc/NRMcs.h`
+- `Simu5G/src/common/PhyPisaData.*`
+- `Simu5G/src/stack/phy/amc/NRMcs.*`
 - `Simu5G/src/stack/phy/ChannelModel/LteRealisticChannelModel.cc`
 - `Simu5G/src/stack/mac/packet/LteSchedulingGrant.msg`
 - `Simu5G/src/stack/mac/packet/Airframe.msg`
@@ -127,8 +124,7 @@ Due to the modified MCS selection, adjustments are required for the retransmissi
 
 As described in Chapter III.B of [1], the 5G resource scheduler receives stream information in the form of TSCAI including stream information such as periodicity, burst size and burst arrival time. The TSCAI handling is implemented in:
 
-- `Simu5G/src/common/GlobalData.cc`
-- `Simu5G/src/common/GlobalData.h`
+- `Simu5G/src/common/GlobalData.*`
 
 ---
 
@@ -136,8 +132,7 @@ As described in Chapter III.B of [1], the 5G resource scheduler receives stream 
 
 The proposed scheduler combines the pre-allocation mechanism (GF allocations) with state-of-the-art dynamic schedulers such as DRR, PF, Max/CI, or priority-based scheduling. This integration is implemented in:
 
-- `Simu5G/src/stack/mac/scheduling_modules/MixedScheduler.cc`
-- `Simu5G/src/stack/mac/scheduling_modules/MixedScheduler.h`
+- `Simu5G/src/stack/mac/scheduling_modules/MixedScheduler.*`
 
 As disucssed in IV.C [1], resources for sporadic time-sensitive flows cannot be pre-allocated. To still meet their time-sensitive requirements, the Maximum Data Burst Volume (MDBV) field of the 5QI profile is used. The RAN scheduler uses this information to allocate resources already after receiving a Scheduling Request (SR), instead of waiting for a Buffer Status Report (BSR). This behavior is implemented in:
 
@@ -152,8 +147,7 @@ As disucssed in IV.C [1], resources for sporadic time-sensitive flows cannot be 
 
 As specified in Table III of [1], the simulations use an Indoor Factory Channel Model. Since Simu5G does not natively support this model, it is implemented in:
 
-- `Simu5G/src/stack/phy/ChannelModel/NRChannelModel_3GPP38_901.cc`
-- `Simu5G/src/stack/phy/ChannelModel/NRChannelModel_3GPP38_901.h`
+- `Simu5G/src/stack/phy/ChannelModel/NRChannelModel_3GPP38_901.*`
 
 ---
 
@@ -161,8 +155,7 @@ As specified in Table III of [1], the simulations use an Indoor Factory Channel 
 
 In the simulation scenarios described in Table III of [1], the scheduler ***Dyn. PDB** published in [4] is used as a baseline. Since [4] only considers downlink scheduling, several extensions were required for uplink support.
 
-- `Simu5G/src/stack/mac/scheduler/DQoS.cc`
-- `Simu5G/src/stack/mac/scheduler/DQoS.h`
+- `Simu5G/src/stack/mac/scheduler/DQoS.*`
 - `Simu5G/src/stack/upperLayer/pdcp/LtePdcpRrc.cc`
 - `Simu5G/src/stack/upperLayer/pdcp/NRPdcpRrcEnb.cc`
 
