@@ -1,0 +1,386 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{gray}{RGB}{128,128,128}
+\definecolor{green}{RGB}{0,128,0}
+\definecolor{orange}{RGB}{255,165,0}
+
+\begin{axis}[
+legend cell align={left},
+legend style={fill opacity=1.0, draw opacity=1, text opacity=1, at={(0.5,1.3)}, anchor=north, draw=gray},
+log basis y={10},
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmajorgrids,
+xmin=0.5, xmax=10.1,
+xtick style={color=black},
+xtick={1.7,5.3,8.9},
+xticklabels={TC7,TC1,TC0},
+y grid style={darkgray176},
+ylabel={Throughput CV},
+ymajorgrids,
+ymin=0.0478985061296284, ymax=1.8760528311098,
+ymode=log,
+ytick style={color=black}
+]
+\path [draw=orange, fill=white, postaction={pattern=north east lines, pattern color=orange}]
+(axis cs:0.7,0.145730261761055)
+--(axis cs:1.3,0.145730261761055)
+--(axis cs:1.3,0.159737461582915)
+--(axis cs:0.7,0.159737461582915)
+--(axis cs:0.7,0.145730261761055)
+--cycle;
+\addplot [black, forget plot]
+table {%
+1 0.145730261761055
+1 0.126162312029119
+};
+\addplot [black, forget plot]
+table {%
+1 0.159737461582915
+1 0.172392247549354
+};
+\addplot [black, forget plot]
+table {%
+0.85 0.126162312029119
+1.15 0.126162312029119
+};
+\addplot [black, forget plot]
+table {%
+0.85 0.172392247549354
+1.15 0.172392247549354
+};
+\addplot [black, opacity=1, mark=asterisk, mark size=2.5, mark options={solid}, only marks, forget plot]
+table {%
+1 0.187893982748163
+};
+\path [draw=blue, fill=white, postaction={pattern=north west lines, pattern color=blue}]
+(axis cs:1.4,0.144524350687753)
+--(axis cs:2,0.144524350687753)
+--(axis cs:2,0.164443640405785)
+--(axis cs:1.4,0.164443640405785)
+--(axis cs:1.4,0.144524350687753)
+--cycle;
+\addplot [black, forget plot]
+table {%
+1.7 0.144524350687753
+1.7 0.122263748739366
+};
+\addplot [black, forget plot]
+table {%
+1.7 0.164443640405785
+1.7 0.17659601188753
+};
+\addplot [black, forget plot]
+table {%
+1.55 0.122263748739366
+1.85 0.122263748739366
+};
+\addplot [black, forget plot]
+table {%
+1.55 0.17659601188753
+1.85 0.17659601188753
+};
+\addplot [black, opacity=1, mark=asterisk, mark size=2.5, mark options={solid}, only marks, forget plot]
+table {%
+1.7 0.256296944209607
+};
+\path [draw=green, fill=white, postaction={pattern=crosshatch, pattern color=green}]
+(axis cs:2.1,0.144190756623783)
+--(axis cs:2.7,0.144190756623783)
+--(axis cs:2.7,0.160720078966299)
+--(axis cs:2.1,0.160720078966299)
+--(axis cs:2.1,0.144190756623783)
+--cycle;
+\addplot [black, forget plot]
+table {%
+2.4 0.144190756623783
+2.4 0.124777665599032
+};
+\addplot [black, forget plot]
+table {%
+2.4 0.160720078966299
+2.4 0.171998676760056
+};
+\addplot [black, forget plot]
+table {%
+2.25 0.124777665599032
+2.55 0.124777665599032
+};
+\addplot [black, forget plot]
+table {%
+2.25 0.171998676760056
+2.55 0.171998676760056
+};
+\path [draw=orange, fill=white, postaction={pattern=north east lines, pattern color=orange}]
+(axis cs:4.3,0.0949086965388274)
+--(axis cs:4.9,0.0949086965388274)
+--(axis cs:4.9,0.100481144415406)
+--(axis cs:4.3,0.100481144415406)
+--(axis cs:4.3,0.0949086965388274)
+--cycle;
+\addplot [black, forget plot]
+table {%
+4.6 0.0949086965388274
+4.6 0.091000801743816
+};
+\addplot [black, forget plot]
+table {%
+4.6 0.100481144415406
+4.6 0.105459037618832
+};
+\addplot [black, forget plot]
+table {%
+4.45 0.091000801743816
+4.75 0.091000801743816
+};
+\addplot [black, forget plot]
+table {%
+4.45 0.105459037618832
+4.75 0.105459037618832
+};
+\addplot [black, opacity=1, mark=asterisk, mark size=2.5, mark options={solid}, only marks, forget plot]
+table {%
+4.6 0.122303531888076
+};
+\path [draw=blue, fill=white, postaction={pattern=north west lines, pattern color=blue}]
+(axis cs:5,0.119172682558497)
+--(axis cs:5.6,0.119172682558497)
+--(axis cs:5.6,0.277878584822711)
+--(axis cs:5,0.277878584822711)
+--(axis cs:5,0.119172682558497)
+--cycle;
+\addplot [black, forget plot]
+table {%
+5.3 0.119172682558497
+5.3 0.0672183480039849
+};
+\addplot [black, forget plot]
+table {%
+5.3 0.277878584822711
+5.3 0.489890398138424
+};
+\addplot [black, forget plot]
+table {%
+5.15 0.0672183480039849
+5.45 0.0672183480039849
+};
+\addplot [black, forget plot]
+table {%
+5.15 0.489890398138424
+5.45 0.489890398138424
+};
+\addplot [black, opacity=1, mark=asterisk, mark size=2.5, mark options={solid}, only marks, forget plot]
+table {%
+5.3 0.749942304403916
+};
+\path [draw=green, fill=white, postaction={pattern=crosshatch, pattern color=green}]
+(axis cs:5.7,0.100305047229711)
+--(axis cs:6.3,0.100305047229711)
+--(axis cs:6.3,0.171568676243727)
+--(axis cs:5.7,0.171568676243727)
+--(axis cs:5.7,0.100305047229711)
+--cycle;
+\addplot [black, forget plot]
+table {%
+6 0.100305047229711
+6 0.05658841945091
+};
+\addplot [black, forget plot]
+table {%
+6 0.171568676243727
+6 0.267399725363077
+};
+\addplot [black, forget plot]
+table {%
+5.85 0.05658841945091
+6.15 0.05658841945091
+};
+\addplot [black, forget plot]
+table {%
+5.85 0.267399725363077
+6.15 0.267399725363077
+};
+\addplot [black, opacity=1, mark=asterisk, mark size=2.5, mark options={solid}, only marks, forget plot]
+table {%
+6 0.887580137968167
+};
+\path [draw=orange, fill=white, postaction={pattern=north east lines, pattern color=orange}]
+(axis cs:7.9,0.190866741901937)
+--(axis cs:8.5,0.190866741901937)
+--(axis cs:8.5,0.416678359055688)
+--(axis cs:7.9,0.416678359055688)
+--(axis cs:7.9,0.190866741901937)
+--cycle;
+\addplot [black, forget plot]
+table {%
+8.2 0.190866741901937
+8.2 0.159932282613008
+};
+\addplot [black, forget plot]
+table {%
+8.2 0.416678359055688
+8.2 0.745205731634816
+};
+\addplot [black, forget plot]
+table {%
+8.05 0.159932282613008
+8.35 0.159932282613008
+};
+\addplot [black, forget plot]
+table {%
+8.05 0.745205731634816
+8.35 0.745205731634816
+};
+\addplot [black, opacity=1, mark=asterisk, mark size=2.5, mark options={solid}, only marks, forget plot]
+table {%
+8.2 1.58795967270958
+};
+\path [draw=blue, fill=white, postaction={pattern=north west lines, pattern color=blue}]
+(axis cs:8.6,0.184032592456359)
+--(axis cs:9.2,0.184032592456359)
+--(axis cs:9.2,0.338840348618084)
+--(axis cs:8.6,0.338840348618084)
+--(axis cs:8.6,0.184032592456359)
+--cycle;
+\addplot [black, forget plot]
+table {%
+8.9 0.184032592456359
+8.9 0.154148241750136
+};
+\addplot [black, forget plot]
+table {%
+8.9 0.338840348618084
+8.9 0.549292550813509
+};
+\addplot [black, forget plot]
+table {%
+8.75 0.154148241750136
+9.05 0.154148241750136
+};
+\addplot [black, forget plot]
+table {%
+8.75 0.549292550813509
+9.05 0.549292550813509
+};
+\addplot [black, opacity=1, mark=asterisk, mark size=2.5, mark options={solid}, only marks, forget plot]
+table {%
+8.9 0.911572881848547
+};
+\path [draw=green, fill=white, postaction={pattern=crosshatch, pattern color=green}]
+(axis cs:9.3,0.182971677937625)
+--(axis cs:9.9,0.182971677937625)
+--(axis cs:9.9,0.234827028397525)
+--(axis cs:9.3,0.234827028397525)
+--(axis cs:9.3,0.182971677937625)
+--cycle;
+\addplot [black, forget plot]
+table {%
+9.6 0.182971677937625
+9.6 0.150637193209828
+};
+\addplot [black, forget plot]
+table {%
+9.6 0.234827028397525
+9.6 0.297768781798343
+};
+\addplot [black, forget plot]
+table {%
+9.45 0.150637193209828
+9.75 0.150637193209828
+};
+\addplot [black, forget plot]
+table {%
+9.45 0.297768781798343
+9.75 0.297768781798343
+};
+\addplot [black, opacity=1, mark=asterisk, mark size=2.5, mark options={solid}, only marks, forget plot]
+table {%
+9.6 0.416594327851733
+};
+\addplot [semithick, black, mark=x, mark size=2.5, mark options={solid}, forget plot]
+table {%
+1 0.154232826993391
+};
+\addplot [semithick, black, mark=x, mark size=2.5, mark options={solid}, forget plot]
+table {%
+1.7 0.155138304959703
+};
+\addplot [semithick, black, mark=x, mark size=2.5, mark options={solid}, forget plot]
+table {%
+2.4 0.153130471626482
+};
+\addplot [semithick, black, mark=x, mark size=2.5, mark options={solid}, forget plot]
+table {%
+4.6 0.098123963940603
+};
+\addplot [semithick, black, mark=x, mark size=2.5, mark options={solid}, forget plot]
+table {%
+5.3 0.165197501084339
+};
+\addplot [semithick, black, mark=x, mark size=2.5, mark options={solid}, forget plot]
+table {%
+6 0.114520598801636
+};
+\addplot [semithick, black, mark=x, mark size=2.5, mark options={solid}, forget plot]
+table {%
+8.2 0.237770572972225
+};
+\addplot [semithick, black, mark=x, mark size=2.5, mark options={solid}, forget plot]
+table {%
+8.9 0.215588968051705
+};
+\addplot [semithick, black, mark=x, mark size=2.5, mark options={solid}, forget plot]
+table {%
+9.6 0.197969180101679
+};
+\addplot [black, forget plot]
+table {%
+0.7 0.154232826993391
+1.3 0.154232826993391
+};
+\addplot [black, forget plot]
+table {%
+1.4 0.155138304959703
+2 0.155138304959703
+};
+\addplot [black, forget plot]
+table {%
+2.1 0.153130471626482
+2.7 0.153130471626482
+};
+\addplot [black, forget plot]
+table {%
+4.3 0.098123963940603
+4.9 0.098123963940603
+};
+\addplot [black, forget plot]
+table {%
+5 0.165197501084339
+5.6 0.165197501084339
+};
+\addplot [black, forget plot]
+table {%
+5.7 0.114520598801636
+6.3 0.114520598801636
+};
+\addplot [black, forget plot]
+table {%
+7.9 0.237770572972225
+8.5 0.237770572972225
+};
+\addplot [black, forget plot]
+table {%
+8.6 0.215588968051705
+9.2 0.215588968051705
+};
+\addplot [black, forget plot]
+table {%
+9.3 0.197969180101679
+9.9 0.197969180101679
+};
+\end{axis}
+
+\end{tikzpicture}

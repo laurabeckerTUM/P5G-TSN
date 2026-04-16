@@ -1,0 +1,80 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{gray}{RGB}{128,128,128}
+\definecolor{green}{RGB}{0,128,0}
+\definecolor{orange}{RGB}{255,165,0}
+\definecolor{violet}{RGB}{238,130,238}
+
+\begin{axis}[
+legend cell align={left},
+legend columns=2,
+legend style={
+  fill opacity=1.0,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.5,1.34)},
+  anchor=north,
+  draw=gray
+},
+log basis y={10},
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmajorgrids,
+xmin=-0.65, xmax=2.65,
+xtick style={color=black},
+xtick={0,1,2},
+xticklabel style={rotate=25.0,anchor=east},
+xticklabels={Mean,99th Percentile,99.9th Percentile},
+y grid style={darkgray176},
+ylabel={End-to-End Delay [ms]},
+ymajorgrids,
+ymin=0.1, ymax=1000,
+ymode=log,
+ytick style={color=black}
+]
+\draw[draw=orange,fill=white,line width=0.32pt,postaction={pattern=north east lines, pattern color=orange}] (axis cs:-0.36,0) rectangle (axis cs:-0.26,7.95136176840367);
+\addlegendimage{ybar,ybar legend,draw=orange,fill=white,line width=0.32pt,postaction={pattern=north east lines, pattern color=orange}}
+\addlegendentry{Priority_MDBV}
+
+\draw[draw=orange,fill=white,line width=0.32pt,postaction={pattern=north east lines, pattern color=orange}] (axis cs:0.64,0) rectangle (axis cs:0.74,14.965);
+\draw[draw=orange,fill=white,line width=0.32pt,postaction={pattern=north east lines, pattern color=orange}] (axis cs:1.64,0) rectangle (axis cs:1.74,21.751736000001);
+\draw[draw=blue,fill=white,line width=0.32pt,postaction={pattern=north west lines, pattern color=blue}] (axis cs:-0.24,0) rectangle (axis cs:-0.14,8.66915136325805);
+\addlegendimage{ybar,ybar legend,draw=blue,fill=white,line width=0.32pt,postaction={pattern=north west lines, pattern color=blue}}
+\addlegendentry{MAXCI_MDBV}
+
+\draw[draw=blue,fill=white,line width=0.32pt,postaction={pattern=north west lines, pattern color=blue}] (axis cs:0.76,0) rectangle (axis cs:0.86,33.947);
+\draw[draw=blue,fill=white,line width=0.32pt,postaction={pattern=north west lines, pattern color=blue}] (axis cs:1.76,0) rectangle (axis cs:1.86,84.8044000000011);
+\draw[draw=green,fill=white,line width=0.32pt,postaction={pattern=crosshatch, pattern color=green}] (axis cs:-0.12,0) rectangle (axis cs:-0.02,8.33283542950061);
+\addlegendimage{ybar,ybar legend,draw=green,fill=white,line width=0.32pt,postaction={pattern=crosshatch, pattern color=green}}
+\addlegendentry{PF_MDBV}
+
+\draw[draw=green,fill=white,line width=0.32pt,postaction={pattern=crosshatch, pattern color=green}] (axis cs:0.88,0) rectangle (axis cs:0.98,24.72702);
+\draw[draw=green,fill=white,line width=0.32pt,postaction={pattern=crosshatch, pattern color=green}] (axis cs:1.88,0) rectangle (axis cs:1.98,46.9897560000008);
+\draw[draw=red,fill=white,line width=0.32pt,postaction={pattern=north east lines, pattern color=red}] (axis cs:-6.93889390390723e-18,0) rectangle (axis cs:0.1,8.89398512699069);
+\addlegendimage{ybar,ybar legend,draw=red,fill=white,line width=0.32pt,postaction={pattern=north east lines, pattern color=red}}
+\addlegendentry{Priority}
+
+\draw[draw=red,fill=white,line width=0.32pt,postaction={pattern=north east lines, pattern color=red}] (axis cs:1,0) rectangle (axis cs:1.1,16.80849);
+\draw[draw=red,fill=white,line width=0.32pt,postaction={pattern=north east lines, pattern color=red}] (axis cs:2,0) rectangle (axis cs:2.1,23.4731280000005);
+\draw[draw=gray,fill=white,line width=0.32pt,postaction={pattern=north west lines, pattern color=gray}] (axis cs:0.12,0) rectangle (axis cs:0.22,14.0136412375132);
+\addlegendimage{ybar,ybar legend,draw=gray,fill=white,line width=0.32pt,postaction={pattern=north west lines, pattern color=gray}}
+\addlegendentry{MAXCI}
+
+\draw[draw=gray,fill=white,line width=0.32pt,postaction={pattern=north west lines, pattern color=gray}] (axis cs:1.12,0) rectangle (axis cs:1.22,126.007960000001);
+\draw[draw=gray,fill=white,line width=0.32pt,postaction={pattern=north west lines, pattern color=gray}] (axis cs:2.12,0) rectangle (axis cs:2.22,606.017172000037);
+\draw[draw=violet,fill=white,line width=0.32pt,postaction={pattern=crosshatch, pattern color=violet}] (axis cs:0.24,0) rectangle (axis cs:0.34,10.4579607887296);
+\addlegendimage{ybar,ybar legend,draw=violet,fill=white,line width=0.32pt,postaction={pattern=crosshatch, pattern color=violet}}
+\addlegendentry{PF}
+
+\draw[draw=violet,fill=white,line width=0.32pt,postaction={pattern=crosshatch, pattern color=violet}] (axis cs:1.24,0) rectangle (axis cs:1.34,39.154);
+\draw[draw=violet,fill=white,line width=0.32pt,postaction={pattern=crosshatch, pattern color=violet}] (axis cs:2.24,0) rectangle (axis cs:2.34,94.4805510000015);
+\path [draw=red, semithick, dash pattern=on 5.55pt off 2.4pt]
+(axis cs:-0.5,50)
+--(axis cs:2.5,50);
+
+\end{axis}
+
+\end{tikzpicture}

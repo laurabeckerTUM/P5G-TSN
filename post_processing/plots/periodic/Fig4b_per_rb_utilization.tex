@@ -1,0 +1,171 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{lightgray204}{RGB}{204,204,204}
+\definecolor{orange}{RGB}{255,165,0}
+
+\begin{axis}[
+height=5cm,
+legend cell align={left},
+legend cell align={left},
+legend style={
+  fill opacity=1.0,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.02,0.98)},
+  anchor=north west,
+  draw=lightgray204
+},
+legend style={
+  fill opacity=1.0,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.02,0.98)},
+  anchor=north west,
+  draw=lightgray204
+},
+tick align=outside,
+tick pos=left,
+width=5.8cm,
+x grid style={darkgray176},
+xmin=-0.541, xmax=4.541,
+xtick style={color=black},
+xtick={0,1,2,3,4},
+xticklabels={GF
+MCS
+adaptive,GF
+MCS
+5,GF
+MCS
+11,GF
+MCS
+20,Dyn.},
+y grid style={darkgray176},
+ylabel={Average PER [\%]},
+ymajorgrids,
+ymin=0, ymax=100,
+ytick style={color=black}
+]
+\draw[draw=blue,fill=white,postaction={pattern=north east lines, pattern color=blue}] (axis cs:-0.31,0) rectangle (axis cs:-0.03,4.34526013422433);
+\addlegendimage{ybar,ybar legend,draw=blue,fill=white,postaction={pattern=north east lines, pattern color=blue}}
+\addlegendentry{PER}
+
+\draw[draw=blue,fill=white,postaction={pattern=north east lines, pattern color=blue}] (axis cs:0.69,0) rectangle (axis cs:0.97,2.33282475703111);
+\draw[draw=blue,fill=white,postaction={pattern=north east lines, pattern color=blue}] (axis cs:1.69,0) rectangle (axis cs:1.97,5.80229062207849);
+\draw[draw=blue,fill=white,postaction={pattern=north east lines, pattern color=blue}] (axis cs:2.69,0) rectangle (axis cs:2.97,26.9199807224291);
+\draw[draw=blue,fill=white,postaction={pattern=north east lines, pattern color=blue}] (axis cs:3.69,0) rectangle (axis cs:3.97,87.8573137042011);
+\path [draw=black, semithick]
+(axis cs:-0.17,4.16266571520139)
+--(axis cs:-0.17,4.52785455324728);
+
+\path [draw=black, semithick]
+(axis cs:0.83,2.18690411565823)
+--(axis cs:0.83,2.47874539840399);
+
+\path [draw=black, semithick]
+(axis cs:1.83,5.17581848700314)
+--(axis cs:1.83,6.42876275715384);
+
+\path [draw=black, semithick]
+(axis cs:2.83,24.3994752524022)
+--(axis cs:2.83,29.4404861924559);
+
+\path [draw=black, semithick]
+(axis cs:3.83,87.455064993845)
+--(axis cs:3.83,88.2595624145573);
+
+\addplot [semithick, black, mark=-, mark size=3, mark options={solid}, only marks]
+table {%
+-0.17 4.16266571520139
+0.83 2.18690411565823
+1.83 5.17581848700314
+2.83 24.3994752524022
+3.83 87.455064993845
+};
+\addlegendentry{PER}
+\addplot [semithick, black, mark=-, mark size=3, mark options={solid}, only marks]
+table {%
+-0.17 4.52785455324728
+0.83 2.47874539840399
+1.83 6.42876275715384
+2.83 29.4404861924559
+3.83 88.2595624145573
+};
+\addlegendentry{PER}
+\end{axis}
+
+\begin{axis}[
+axis y line=right,
+height=5cm,
+legend cell align={left},
+legend style={
+  fill opacity=1.0,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.02,0.85)},
+  anchor=north west,
+  draw=lightgray204
+},
+tick align=outside,
+width=5.8cm,
+x grid style={darkgray176},
+xmin=-0.541, xmax=4.541,
+xtick pos=left,
+xtick style={color=black},
+y grid style={darkgray176},
+ylabel={RB Utilization [\%]},
+ymin=0, ymax=100,
+ytick pos=right,
+ytick style={color=black},
+yticklabel style={anchor=west}
+]
+\draw[draw=orange,fill=white,postaction={pattern=north west lines, pattern color=orange}] (axis cs:0.03,0) rectangle (axis cs:0.31,24.4830292634752);
+\addlegendimage{ybar,ybar legend,draw=orange,fill=white,postaction={pattern=north west lines, pattern color=orange}}
+\addlegendentry{Used RBs}
+
+\draw[draw=orange,fill=white,postaction={pattern=north west lines, pattern color=orange}] (axis cs:1.03,0) rectangle (axis cs:1.31,58.3954129632517);
+\draw[draw=orange,fill=white,postaction={pattern=north west lines, pattern color=orange}] (axis cs:2.03,0) rectangle (axis cs:2.31,35.1856671344664);
+\draw[draw=orange,fill=white,postaction={pattern=north west lines, pattern color=orange}] (axis cs:3.03,0) rectangle (axis cs:3.31,21.8931077498831);
+\draw[draw=orange,fill=white,postaction={pattern=north west lines, pattern color=orange}] (axis cs:4.03,0) rectangle (axis cs:4.31,36.2738292011019);
+\path [draw=black, semithick]
+(axis cs:0.17,23.9772034244244)
+--(axis cs:0.17,24.9888551025261);
+
+\path [draw=black, semithick]
+(axis cs:1.17,58.3745769164238)
+--(axis cs:1.17,58.4162490100796);
+
+\path [draw=black, semithick]
+(axis cs:2.17,35.1730858937322)
+--(axis cs:2.17,35.1982483752007);
+
+\path [draw=black, semithick]
+(axis cs:3.17,21.8850691913053)
+--(axis cs:3.17,21.9011463084608);
+
+\path [draw=black, semithick]
+(axis cs:4.17,35.8035469040235)
+--(axis cs:4.17,36.7441114981804);
+
+\addplot [semithick, black, mark=-, mark size=3, mark options={solid}, only marks]
+table {%
+0.17 23.9772034244244
+1.17 58.3745769164238
+2.17 35.1730858937322
+3.17 21.8850691913053
+4.17 35.8035469040235
+};
+\addlegendentry{Used RBs}
+\addplot [semithick, black, mark=-, mark size=3, mark options={solid}, only marks]
+table {%
+0.17 24.9888551025261
+1.17 58.4162490100796
+2.17 35.1982483752007
+3.17 21.9011463084608
+4.17 36.7441114981804
+};
+\addlegendentry{Used RBs}
+\end{axis}
+
+\end{tikzpicture}

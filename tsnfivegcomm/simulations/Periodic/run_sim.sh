@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# --- Environment setup ---
-OMNETPP_ROOT=<path_to_omnetpp-6.1>
+OMNETPP_ROOT=~/omnetpp-6.1/
 TSN5G_ROOT=$OMNETPP_ROOT/P5G-TSN/tsnfivegcomm
 TSN5G_SRC=$TSN5G_ROOT/src
 SIMU5G_ROOT=$OMNETPP_ROOT/P5G-TSN/Simu5G
@@ -11,7 +10,6 @@ INET_SRC=$INET_ROOT/src
 
 export PATH="$TSN5G_SRC:$SIMU5G_SRC:$INET_ROOT/out/clang-release/src:$OMNETPP_ROOT/bin:$PATH"
 
-# --- Simulation parameters ---
 SCENARIOS=()
 SCENARIOS+=("Preallocation_adaptiveMCS")
 SCENARIOS+=("Priority")
@@ -23,7 +21,12 @@ REPEATS=10
 PARALLEL=3
 SIM_FOLDER="."
 
-# --- Function to run one simulation instance ---
+cd ~/omnetpp-6.1/
+source setenv
+
+cd ~/omnetpp-6.1/p5g-tsn/tsnfivegcomm/simulations/Periodic/
+
+
 run_sim() {
     SCEN=$1
     RUN=$2
@@ -36,7 +39,6 @@ run_sim() {
     echo "Scenario $SCEN, run $RUN finished. Log: $LOG_FILE"
 }
 
-# --- Launch runs ---
 for SCEN in "${SCENARIOS[@]}"; do
     echo "=== Starting scenario: $SCEN ==="
     COUNTER=0

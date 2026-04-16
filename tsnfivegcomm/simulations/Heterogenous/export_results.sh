@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Scenarios to process
 SCENARIOS=()
 SCENARIOS+=("Priority")
 SCENARIOS+=("PF")
@@ -11,21 +10,21 @@ SCENARIOS+=("PF_MDBV")
 SCENARIOS+=("MAXCI_MDBV")
 SCENARIOS+=("DRR_MDBV")
 
-# Directories
-INPUT_DIR="./results"
-OUTPUT_DIR="./results/csv"
+cd ~/omnetpp-6.1/
+source setenv
 
-# Ensure output directory exists
+cd ~/omnetpp-6.1/p5g-tsn/tsnfivegcomm/simulations/Heterogenous/
+
+INPUT_DIR="./results"
+OUTPUT_DIR=~/omnetpp-6.1/p5g-tsn/post_processing/results/heterogenous
+
 mkdir -p "$OUTPUT_DIR"
 
-# Filter expression (same as you wrote)
-FILTER='module =~"NetworkHeterogenous*.Listener.app[*]" AND (name =~ "endToEndDelay:vector" OR name =~ "throughput:vector" OR name =~ "packetReceived:vector(packetBytes)" ) OR (module =~ "NetworkHeterogenous*.Talker*.app[*]" AND name =~ "packetSent:vector(packetBytes)") OR name=~"macCGRescheduled:vector" OR name=~"avgServedBlocksUl:vector"' 
+FILTER='module =~"NetworkHeterogenous*.Listener.app[*]" AND (name =~ "endToEndDelay:vector" OR name =~ "throughput:vector" OR name =~ "packetReceived:vector(packetBytes)" ) OR (module =~ "NetworkHeterogenous*.Talker*.app[*]" AND name =~ "packetSent:vector(packetBytes)") OR name=~"avgServedBlocksUl:vector"' 
 
-# Loop over scenarios
 for SCEN in "${SCENARIOS[@]}"; do
     echo "Processing scenario: $SCEN"
 
-    # Loop over all runs of the scenario
     for VECFILE in "$INPUT_DIR"/${SCEN}-*.vec; do
         if [[ -f "$VECFILE" ]]; then
             BASENAME=$(basename "$VECFILE" .vec)

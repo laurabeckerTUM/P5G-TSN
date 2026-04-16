@@ -19,7 +19,6 @@
 #include <inet/common/INETDefs.h>
 
 #include "world/radio/IChannelControl.h"
-#include "common/features.h"
 
 namespace simu5g {
 

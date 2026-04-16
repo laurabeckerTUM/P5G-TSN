@@ -36,7 +36,6 @@
 #include <inet/common/packet/Packet.h>
 #include <inet/common/Protocol.h>
 
-#include "common/features.h"
 #include "common/LteCommonEnum_m.h"
 
 namespace simu5g {

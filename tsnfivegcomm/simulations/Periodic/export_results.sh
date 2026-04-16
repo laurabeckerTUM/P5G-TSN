@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Scenarios to process
 SCENARIOS=()
 SCENARIOS+=("Preallocation_adaptiveMCS")
 SCENARIOS+=("Priority")
@@ -8,18 +7,18 @@ SCENARIOS+=("Preallocation_CG5")
 SCENARIOS+=("Preallocation_CG11")
 SCENARIOS+=("Preallocation_CG20")
 
+cd ~/omnetpp-6.1/
+source setenv
 
-# Directories
+cd ~/omnetpp-6.1/p5g-tsn/tsnfivegcomm/simulations/Periodic/
+
 INPUT_DIR="./results"
-OUTPUT_DIR="./results/csv"
+OUTPUT_DIR=~/omnetpp-6.1/p5g-tsn/post_processing/results/periodic
 
-# Ensure output directory exists
 mkdir -p "$OUTPUT_DIR"
 
-# Filter expression (same as you wrote)
-FILTER='module =~"NetworkPeriodic*.Listener.app[*]" AND (name =~ "endToEndDelay:vector" OR name =~ "packetReceived:vector(packetBytes)" ) OR (module =~ "NetworkPeriodic*.Talker*.app[*]" AND name =~ "packetSent:vector(packetBytes)") OR name=~"macCGRescheduled:vector" OR name=~"avgServedBlocksUl:vector"' #OR name=~"harqErrorRateUlPeriodic:vector"
+FILTER='module =~"NetworkPeriodic*.Listener.app[*]" AND (name =~ "endToEndDelay:vector" OR name =~ "packetReceived:vector(packetBytes)" ) OR (module =~ "NetworkPeriodic*.Talker*.app[*]" AND name =~ "packetSent:vector(packetBytes)")  OR name=~"avgServedBlocksUl:vector"' 
 
-# Loop over scenarios
 for SCEN in "${SCENARIOS[@]}"; do
     echo "Processing scenario: $SCEN"
 
