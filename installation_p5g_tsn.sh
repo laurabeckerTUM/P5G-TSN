@@ -41,11 +41,8 @@ echo "Building OMNeT++..."
 make
 
 echo "Cloning P5G-TSN repository..."
-git clone --recurse-submodules https://github.com/laurabeckerTUM/P5G-TSN.git p5g-tsn
-
+git clone --branch Joint_Scheduler_NOMS_Artifact --recurse-submodules https://github.com/laurabeckerTUM/P5G-TSN.git p5g-tsn
 cd p5g-tsn
-
-#git checkout Joint_Scheduler_NOMS to be replaced with tag
 git submodule update --init --recursive
 
 source setenv
